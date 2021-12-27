@@ -3,3 +3,12 @@
 [0m2021.12.26 21:30:17 WARN  Build server is not auto-connectable.[0m
 Dec 26, 2021 9:31:32 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+Dec 26, 2021 9:32:02 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.12.26 21:42:36 WARN  no build target for: /home/robin/fun/rogomatic/build.sbt[0m
+[0m2021.12.26 21:42:39 INFO  no build target: using presentation compiler with only scala-library: 3.1.0[0m
+[0m2021.12.26 21:42:42 INFO  time: code lens generation in 5.21s[0m
+[0m2021.12.26 21:43:15 WARN  no build target for: /home/robin/fun/rogomatic/build.sbt[0m
+[0m2021.12.26 21:43:32 WARN  no build target for: /home/robin/fun/rogomatic/build.sbt[0m
+[0m2021.12.26 21:43:43 INFO  skipping build import with status 'Dismissed'[0m
+[0m2021.12.26 21:53:45 WARN  no build target for: /home/robin/fun/rogomatic/src/test/scala/Test1.scala[0m
