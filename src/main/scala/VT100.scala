@@ -1,3 +1,6 @@
 class VT100 {
-  def getScreen() : Seq[String] = Seq.fill(24)(" " * 80)
+  var firstChar = ' '
+  def getScreen() : Seq[String] = Seq(firstChar + " " * 79) ++ Seq.fill(23)(" " * 80)
+
+  def sendChar(char : Char) : Unit = firstChar = char
 }
