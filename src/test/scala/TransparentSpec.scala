@@ -32,7 +32,7 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers :
                   .map(_.padTo(80,' '))
 
         object MockRogue extends IRogue {
-            override def getScreen : Array[String] = firstScreen
+            override def getScreen() : Array[String] = firstScreen
         }
 
         object MockUser extends IUser {

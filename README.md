@@ -61,6 +61,8 @@ As I started, I quickly found that the design of Rog-O-Matic does not really mat
 
 * Scala - Following the Pragmatic Programmers' advice that every new project should use one unfamiliar technology, I am using this project to teach myself Scala. The system is written in Scala 3.1.0
 
+* Jediterm - The library JediTerm (https://github.com/JetBrains/jediterm) is used to interpret the output from Rogue. This is used under the GNU Lesser Public License v3, see lgpl-3.0.txt
+
 #### How to Play Rogue
 
 If you want to play Rogue yourself and you have a Linux system, it is in the bsdgames-nonfree package. Or you can play it online here: https://www.myabandonware.com/game/rogue-4n/play-4n
