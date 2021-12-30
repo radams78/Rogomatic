@@ -38,4 +38,13 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
       terminal.getCursorX() should be (80)
       terminal.getCursorY() should be (1)
   }
+
+  //todo should not go into input buffer
+  it should "ignore a NUL character" in {
+      val terminal = VT100()
+      terminal.sendChar('\u0000')
+      terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(" " * 80)
+      terminal.getCursorX() should be (1)
+      terminal.getCursorY() should be (1)     
+  }
 }

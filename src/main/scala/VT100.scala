@@ -9,6 +9,7 @@ class VT100 {
   def getCursorY() : Int = cursor.y
 
   def sendChar(char : Char) : Unit = {
+    if (char == '\u0000') return
     screen(cursor.y - 1)(cursor.x - 1) = char
     if (cursor.x < 80) cursor = Cursor(cursor.x + 1, cursor.y)
   }
