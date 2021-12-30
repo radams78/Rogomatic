@@ -4,9 +4,9 @@ class VT100 {
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
 
-  def getCursorX() : Int = 1
+  def getCursorX() : Int = cursor.x
 
-  def getCursorY() : Int = 1
+  def getCursorY() : Int = cursor.y
 
   def sendChar(char : Char) : Unit = {
     screen(cursor.y - 1)(cursor.x - 1) = char
