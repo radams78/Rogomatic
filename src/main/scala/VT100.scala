@@ -10,7 +10,7 @@ class VT100 {
 
   def sendChar(char : Char) : Unit = {
     screen(cursor.y - 1)(cursor.x - 1) = char
-    cursor = Cursor(cursor.x + 1, cursor.y)
+    if (cursor.x < 80) cursor = Cursor(cursor.x + 1, cursor.y)
   }
 
   private class Cursor(val x : Int, val y : Int)

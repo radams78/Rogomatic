@@ -29,4 +29,13 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
       terminal.getCursorX() should be (3)
       terminal.getCursorY() should be (1)
   }
+
+  it should "when it reaches the final column, overwrite the last character" in {
+      val terminal = VT100()
+      for i <- 1 to 80 do terminal.sendChar('a')
+      terminal.sendChar('b')
+      terminal.getScreen() should contain theSameElementsInOrderAs Seq("a" * 79 + "b") ++ Seq.fill(23)(" " * 80)
+      terminal.getCursorX() should be (80)
+      terminal.getCursorY() should be (1)
+  }
 }
