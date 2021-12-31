@@ -8,9 +8,17 @@ class VT100 {
 
   def getCursorY() : Int = cursor.y
 
-  def sendChar(char : Char) : Unit = {
-    if (char == '\u0000') return
+  def sendChar(char : Char) : Unit = char match {
+    case '\u0000' => ()
+    case c => printChar(c)
+  }
+
+  private def printChar(char : Char) = {
     screen(cursor.y - 1)(cursor.x - 1) = char
+    advanceCursor()  
+  }
+
+  private def advanceCursor() : Unit = {
     if (cursor.x < 80) cursor = Cursor(cursor.x + 1, cursor.y)
   }
 
