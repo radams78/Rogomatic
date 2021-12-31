@@ -133,3 +133,10 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
             .map(_.padTo(80,' '))
       )
   }
+
+  it should "when given a VT character, move the cursor down" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar(VT100.VT)
+      terminal.getCursorX() should be(23)
+      terminal.getCursorY() should be(15)
+  }
