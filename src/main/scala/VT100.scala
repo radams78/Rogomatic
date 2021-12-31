@@ -12,12 +12,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
     char match
       case VT100.NUL => ()
       case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
-      case VT100.LF => 
-        if cursor.y == 24
-        then
-          for y <- 0 to 22 do screen(y) = screen(y+1)
-          screen(23) = Array.fill(80)(' ')
-        else cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
+      case VT100.LF => lineFeed()
       case c => printChar(c)
 
   private def printChar(char : Char) =
@@ -26,6 +21,13 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
 
   private def advanceCursor() : Unit =
     if cursor.x < 80 then cursor = Cursor(cursor.x + 1, cursor.y)
+
+  private def lineFeed() : Unit =
+    if cursor.y == 24
+    then
+      for y <- 0 to 22 do screen(y) = screen(y+1)
+      screen(23) = Array.fill(80)(' ')
+    else cursor = Cursor(cursor.x, cursor.y + 1)
 
   private case class Cursor(x : Int, y : Int):
     assert(x > 0, s"Cursor moved off left edge of screen: ($x,$y)")
