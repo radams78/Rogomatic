@@ -1,5 +1,9 @@
 class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
-  private var screen : Array[Array[Char]] = screenContents.split("\n").padTo(24,"").map(_.padTo(80,' ').toCharArray)
+  private var screen : Array[Array[Char]] = 
+    screenContents
+      .split("\n")
+      .padTo(24,"")
+      .map(_.padTo(80,' ').toCharArray)
   private var cursor : Cursor = Cursor(x, y)
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
@@ -11,13 +15,16 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
   def sendChar(char : Char) : Unit = 
     char match
       case VT100.NUL => ()
-      case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
+      case VT100.BS => backspace()
       case VT100.LF => lineFeed()
       case c => printChar(c)
 
   private def printChar(char : Char) =
     screen(cursor.y - 1)(cursor.x - 1) = char
     advanceCursor()
+
+  private def backspace() : Unit =
+    if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
 
   private def advanceCursor() : Unit =
     if cursor.x < 80 then cursor = Cursor(cursor.x + 1, cursor.y)
