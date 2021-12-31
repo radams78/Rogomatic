@@ -10,7 +10,7 @@ class VT100(x : Int = 1, y : Int = 1) {
 
   def sendChar(char : Char) : Unit = char match {
     case VT100.NUL => ()
-    case '\u0008' => cursor = Cursor(cursor.x - 1, cursor.y)
+    case VT100.BS => cursor = Cursor(cursor.x - 1, cursor.y)
     case c => printChar(c)
   }
 
@@ -28,4 +28,5 @@ class VT100(x : Int = 1, y : Int = 1) {
 
 object VT100 {
   val NUL = '\u0000'
+  val BS = '\u0008'
 }
