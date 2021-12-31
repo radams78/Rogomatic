@@ -47,4 +47,15 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
       terminal.getCursorX() should be (1)
       terminal.getCursorY() should be (1)     
   }
+
+  // TODO ENQ character
+
+  // TODO BEL character
+
+  it should "when given a BS character, move the cursor left" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar('\u0008')
+      terminal.getCursorX() should be(22)
+      terminal.getCursorY() should be(14)
+  }
 }

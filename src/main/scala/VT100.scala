@@ -1,6 +1,6 @@
-class VT100 {
+class VT100(x : Int = 1, y : Int = 1) {
   private var screen : Array[Array[Char]] = Array.fill(24)(Array.fill(80)(' '))
-  private var cursor : Cursor = Cursor(1, 1)
+  private var cursor : Cursor = Cursor(x, y)
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
 
@@ -10,6 +10,7 @@ class VT100 {
 
   def sendChar(char : Char) : Unit = char match {
     case '\u0000' => ()
+    case '\u0008' => cursor = Cursor(cursor.x - 1, cursor.y)
     case c => printChar(c)
   }
 
