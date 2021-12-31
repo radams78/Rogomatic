@@ -1,3 +1,7 @@
+import scala.collection.immutable.Queue
+import scala.collection.mutable.Stack
+import java.{util => ju}
+
 class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
   private var screen : Array[Array[Char]] = 
     screenContents
@@ -5,6 +9,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
       .padTo(24,"")
       .map(_.padTo(80,' ').toCharArray)
   private var cursor : Cursor = Cursor(x, y)
+  private var inputBuffer : Queue[Char] = Queue()
   private var controlSeq = 0
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
@@ -14,15 +19,29 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
   def getCursorY() : Int = cursor.y
 
   def sendChar(char : Char) : Unit = 
-    char match
+    char match 
       case VT100.NUL | VT100.DEL => ()
-      case VT100.BS => backspace()
-      case VT100.LF | VT100.VT | VT100.FF => lineFeed()
-      case VT100.CR => cursor = Cursor(1, cursor.y)
-      case VT100.ESC => controlSeq += 1
-      case '[' => if (controlSeq > 0) controlSeq += 1 else printChar('[')
-      case 'D' => if (controlSeq == 2) backspace() else printChar('D')
-      case c => printChar(c)
+      case char => // TODO Keep consuming characters until we cannot any more
+        inputBuffer = inputBuffer :+ char
+        inputBuffer.dequeueOption match
+          case Some(VT100.BS, tail) =>
+            inputBuffer = tail
+            backspace()
+          case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
+            inputBuffer = tail
+            lineFeed()
+          case Some(VT100.CR, tail) =>
+            inputBuffer = tail
+            cursor = Cursor(1, cursor.y)
+          case Some(VT100.ESC, tail) =>
+            if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
+            then
+              inputBuffer = inputBuffer.drop(3)
+              backspace()
+          case Some(c, tail) =>
+            inputBuffer = tail
+            printChar(c)
+          case None => ()
 
   private def printChar(char : Char) =
     screen(cursor.y - 1)(cursor.x - 1) = char

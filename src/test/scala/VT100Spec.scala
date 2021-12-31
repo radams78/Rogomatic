@@ -174,3 +174,5 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorX() should be(22)
       terminal.getCursorY() should be(14)
   }
+
+  // todo Input buffer overflow
