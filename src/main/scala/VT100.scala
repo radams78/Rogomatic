@@ -16,7 +16,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
     char match
       case VT100.NUL => ()
       case VT100.BS => backspace()
-      case VT100.LF | VT100.VT => lineFeed()
+      case VT100.LF | VT100.VT | VT100.FF => lineFeed()
       case c => printChar(c)
 
   private def printChar(char : Char) =
@@ -47,5 +47,6 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
 object VT100:
   val NUL = '\u0000'
   val BS = '\u0008'
-  val LF = '\n'
+  val LF = '\u000a'
   val VT = '\u000b'
+  val FF = '\u000c'
