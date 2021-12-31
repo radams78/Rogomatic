@@ -10,7 +10,7 @@ class VT100(x : Int = 1, y : Int = 1) {
 
   def sendChar(char : Char) : Unit = char match {
     case VT100.NUL => ()
-    case VT100.BS => cursor = Cursor(cursor.x - 1, cursor.y) // todo left edge
+    case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
     case VT100.LF => cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
     case c => printChar(c)
   }
@@ -24,7 +24,12 @@ class VT100(x : Int = 1, y : Int = 1) {
     if (cursor.x < 80) cursor = Cursor(cursor.x + 1, cursor.y)
   }
 
-  private class Cursor(val x : Int, val y : Int)
+  private class Cursor(val x : Int, val y : Int) {
+    assert(x > 0, s"Cursor moved off left edge of screen: ($x,$y)")
+    assert(x <= 80, s"Cursor moved off right edge of screen: ($x,$y)")
+    assert(y > 0, s"Cursor moved off top of screen: ($x,$y)")
+    assert(y <= 24, s"Cursor moved off bottom of screen: ($x,$y)")
+  }
 }
 
 object VT100 {
