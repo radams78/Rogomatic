@@ -24,10 +24,12 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
 
   private def lineFeed() : Unit =
     if cursor.y == 24
-    then
-      for y <- 0 to 22 do screen(y) = screen(y+1)
-      screen(23) = Array.fill(80)(' ')
+    then scroll()
     else cursor = Cursor(cursor.x, cursor.y + 1)
+
+  private def scroll() : Unit =
+    for y <- 0 to 22 do screen(y) = screen(y+1)
+    screen(23) = Array.fill(80)(' ')
 
   private case class Cursor(x : Int, y : Int):
     assert(x > 0, s"Cursor moved off left edge of screen: ($x,$y)")
