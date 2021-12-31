@@ -1,5 +1,5 @@
-class VT100(x : Int = 1, y : Int = 1):
-  private var screen : Array[Array[Char]] = Array.fill(24)(Array.fill(80)(' '))
+class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
+  private var screen : Array[Array[Char]] = screenContents.split("\n").padTo(24,"").map(_.padTo(80,' ').toCharArray)
   private var cursor : Cursor = Cursor(x, y)
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
@@ -12,7 +12,12 @@ class VT100(x : Int = 1, y : Int = 1):
     char match
       case VT100.NUL => ()
       case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
-      case VT100.LF => cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
+      case VT100.LF => 
+        if cursor.y == 24
+        then
+          for y <- 0 to 22 do screen(y) = screen(y+1)
+          screen(23) = Array.fill(80)(' ')
+        else cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
       case c => printChar(c)
 
   private def printChar(char : Char) =

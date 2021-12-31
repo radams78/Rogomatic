@@ -74,3 +74,62 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorX() should be(23)
       terminal.getCursorY() should be(15)
   }
+
+  it should "when given an LF character at the bottom of the screen, scroll the screen" in {
+      val terminal = VT100(1, 24,
+      """a
+        |b
+        |c
+        |d
+        |e
+        |f
+        |g
+        |h
+        |i
+        |j
+        |k
+        |l
+        |m
+        |n
+        |o
+        |p
+        |q
+        |r
+        |s
+        |t
+        |u
+        |v
+        |w
+        |x""".stripMargin)
+      terminal.sendChar(VT100.LF)
+      terminal.getCursorX() should be (1)
+      terminal.getCursorY() should be (24)
+      terminal.getScreen() should contain theSameElementsInOrderAs (
+          """b
+            |c
+            |d
+            |e
+            |f
+            |g
+            |h
+            |i
+            |j
+            |k
+            |l
+            |m
+            |n
+            |o
+            |p
+            |q
+            |r
+            |s
+            |t
+            |u
+            |v
+            |w
+            |x
+            | """.stripMargin
+            .split('\n')
+            .map(_.padTo(80,' '))
+      )
+  }
