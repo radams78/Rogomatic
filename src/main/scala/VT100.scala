@@ -5,6 +5,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
       .padTo(24,"")
       .map(_.padTo(80,' ').toCharArray)
   private var cursor : Cursor = Cursor(x, y)
+  private var controlSeq = 0
   
   def getScreen() : Seq[String] = screen.map(_.mkString)
 
@@ -18,6 +19,9 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
       case VT100.BS => backspace()
       case VT100.LF | VT100.VT | VT100.FF => lineFeed()
       case VT100.CR => cursor = Cursor(1, cursor.y)
+      case VT100.ESC => controlSeq += 1
+      case '[' => if (controlSeq > 0) controlSeq += 1 else printChar('[')
+      case 'D' => if (controlSeq == 2) backspace() else printChar('D')
       case c => printChar(c)
 
   private def printChar(char : Char) =
@@ -52,4 +56,5 @@ object VT100:
   val VT = '\u000b'
   val FF = '\u000c'
   val CR = '\u000d'
+  val ESC = '\u001b'
   val DEL = '\u007f'

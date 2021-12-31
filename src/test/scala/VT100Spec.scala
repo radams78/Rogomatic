@@ -56,7 +56,7 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorX() should be (1)
       terminal.getCursorY() should be (1)     
   }
-  
+
   // TODO ENQ character
 
   // TODO BEL character
@@ -164,4 +164,13 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorY() should be(14)
   }
 
-  // todo SO and SI chars
+  // todo SO and SI chars etc.
+
+  it should "when given a CUB sequence, move the cursor left" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar(VT100.ESC)
+      terminal.sendChar('[')
+      terminal.sendChar('D')
+      terminal.getCursorX() should be(22)
+      terminal.getCursorY() should be(14)
+  }
