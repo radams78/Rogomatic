@@ -1,4 +1,4 @@
-class VT100(x : Int = 1, y : Int = 1) {
+class VT100(x : Int = 1, y : Int = 1):
   private var screen : Array[Array[Char]] = Array.fill(24)(Array.fill(80)(' '))
   private var cursor : Cursor = Cursor(x, y)
   
@@ -8,32 +8,27 @@ class VT100(x : Int = 1, y : Int = 1) {
 
   def getCursorY() : Int = cursor.y
 
-  def sendChar(char : Char) : Unit = char match {
-    case VT100.NUL => ()
-    case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
-    case VT100.LF => cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
-    case c => printChar(c)
-  }
+  def sendChar(char : Char) : Unit = 
+    char match
+      case VT100.NUL => ()
+      case VT100.BS => if (cursor.x > 1) cursor = Cursor(cursor.x - 1, cursor.y)
+      case VT100.LF => cursor = Cursor(cursor.x, cursor.y + 1) // todo bottom margin
+      case c => printChar(c)
 
-  private def printChar(char : Char) = {
+  private def printChar(char : Char) =
     screen(cursor.y - 1)(cursor.x - 1) = char
-    advanceCursor()  
-  }
+    advanceCursor()
 
-  private def advanceCursor() : Unit = {
-    if (cursor.x < 80) cursor = Cursor(cursor.x + 1, cursor.y)
-  }
+  private def advanceCursor() : Unit =
+    if cursor.x < 80 then cursor = Cursor(cursor.x + 1, cursor.y)
 
-  private class Cursor(val x : Int, val y : Int) {
+  private case class Cursor(x : Int, y : Int):
     assert(x > 0, s"Cursor moved off left edge of screen: ($x,$y)")
     assert(x <= 80, s"Cursor moved off right edge of screen: ($x,$y)")
     assert(y > 0, s"Cursor moved off top of screen: ($x,$y)")
     assert(y <= 24, s"Cursor moved off bottom of screen: ($x,$y)")
-  }
-}
 
-object VT100 {
+object VT100:
   val NUL = '\u0000'
   val BS = '\u0008'
   val LF = '\n'
-}
