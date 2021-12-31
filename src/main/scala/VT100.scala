@@ -9,7 +9,7 @@ class VT100(x : Int = 1, y : Int = 1) {
   def getCursorY() : Int = cursor.y
 
   def sendChar(char : Char) : Unit = char match {
-    case '\u0000' => ()
+    case VT100.NUL => ()
     case '\u0008' => cursor = Cursor(cursor.x - 1, cursor.y)
     case c => printChar(c)
   }
@@ -24,4 +24,8 @@ class VT100(x : Int = 1, y : Int = 1) {
   }
 
   private class Cursor(val x : Int, val y : Int)
+}
+
+object VT100 {
+  val NUL = '\u0000'
 }
