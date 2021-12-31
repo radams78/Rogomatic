@@ -48,6 +48,15 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorY() should be (1)     
   }
 
+  //todo should not go into input buffer
+  it should "ignore a DEL character" in {
+      val terminal = VT100()
+      terminal.sendChar(VT100.DEL)
+      terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(" " * 80)
+      terminal.getCursorX() should be (1)
+      terminal.getCursorY() should be (1)     
+  }
+  
   // TODO ENQ character
 
   // TODO BEL character
@@ -154,3 +163,5 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorX() should be(1)
       terminal.getCursorY() should be(14)
   }
+
+  // todo SO and SI chars
