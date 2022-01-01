@@ -4,8 +4,8 @@ import java.{util => ju}
 
 class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
   private var display : VT100Display = VT100Display(x, y, screenContents)
+  private var inputBuffer : InputBuffer = InputBuffer()
   private var cursor : VT100.Cursor = VT100.Cursor(x, y)
-  private var inputBuffer : Queue[Char] = Queue()
   private var controlSeq = 0
   
   def getScreen() : Seq[String] = display.getScreen()
@@ -18,12 +18,12 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
     char match 
       case VT100.NUL | VT100.DEL => ()
       case char => // TODO Keep consuming characters until we cannot any more
-        inputBuffer = inputBuffer :+ char
+        inputBuffer = inputBuffer.add(char)
         for (cs, rest) <- interpretBuffer(inputBuffer) do
           performAction(cs)
           inputBuffer = rest
 
-  private def interpretBuffer(inputBuffer : Queue[Char]) : Option[(CharSeq, Queue[Char])] =
+  private def interpretBuffer(inputBuffer : InputBuffer) : Option[(CharSeq, InputBuffer)] =
     inputBuffer.dequeueOption match
       case Some(VT100.BS, tail) =>
         Some(CharSeq.Backspace, tail)
