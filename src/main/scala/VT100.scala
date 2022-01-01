@@ -26,7 +26,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
         inputBuffer.dequeueOption match
           case Some(VT100.BS, tail) =>
             inputBuffer = tail
-            backspace()
+            performAction(CharSeq.Backspace)
           case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
             inputBuffer = tail
             lineFeed()
@@ -42,6 +42,20 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
             inputBuffer = tail
             printChar(c)
           case None => ()
+
+  private def performAction(charSeq : CharSeq) : Unit = charSeq match
+    case CharSeq.Backspace => backspace()
+    case CharSeq.Linefeed => lineFeed()
+    case CharSeq.CarriageReturn => cursor = Cursor(1, cursor.y)
+    case CharSeq.CursorBackwards(n) => for i <- 1 to n do backspace()
+    case CharSeq.NormalChar(c) => printChar(c)
+
+  private enum CharSeq:
+    case Backspace
+    case Linefeed
+    case CarriageReturn
+    case CursorBackwards(n : Int)
+    case NormalChar(c : Char)
 
   private def printChar(char : Char) =
     screen(cursor.y - 1)(cursor.x - 1) = char
