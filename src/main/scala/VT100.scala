@@ -37,7 +37,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
             if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
             then
               inputBuffer = inputBuffer.drop(3)
-              backspace()
+              performAction(CharSeq.CursorBackwards(1))
           case Some(c, tail) =>
             inputBuffer = tail
             printChar(c)
