@@ -40,7 +40,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
               performAction(CharSeq.CursorBackwards(1))
           case Some(c, tail) =>
             inputBuffer = tail
-            printChar(c)
+            performAction(CharSeq.NormalChar(c))
           case None => ()
 
   private def performAction(charSeq : CharSeq) : Unit = charSeq match
