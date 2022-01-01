@@ -32,7 +32,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
             performAction(CharSeq.Linefeed)
           case Some(VT100.CR, tail) =>
             inputBuffer = tail
-            cursor = Cursor(1, cursor.y)
+            performAction(CharSeq.CarriageReturn)
           case Some(VT100.ESC, tail) =>
             if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
             then
