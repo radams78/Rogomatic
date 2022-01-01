@@ -29,7 +29,7 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
             performAction(CharSeq.Backspace)
           case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
             inputBuffer = tail
-            lineFeed()
+            performAction(CharSeq.Linefeed)
           case Some(VT100.CR, tail) =>
             inputBuffer = tail
             cursor = Cursor(1, cursor.y)
