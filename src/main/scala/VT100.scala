@@ -23,25 +23,24 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
       case VT100.NUL | VT100.DEL => ()
       case char => // TODO Keep consuming characters until we cannot any more
         inputBuffer = inputBuffer :+ char
-        inputBuffer.dequeueOption match
-          case Some(VT100.BS, tail) =>
-            inputBuffer = tail
-            performAction(CharSeq.Backspace)
-          case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
-            inputBuffer = tail
-            performAction(CharSeq.Linefeed)
-          case Some(VT100.CR, tail) =>
-            inputBuffer = tail
-            performAction(CharSeq.CarriageReturn)
-          case Some(VT100.ESC, tail) =>
-            if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
-            then
-              inputBuffer = inputBuffer.drop(3)
-              performAction(CharSeq.CursorBackwards(1))
-          case Some(c, tail) =>
-            inputBuffer = tail
-            performAction(CharSeq.NormalChar(c))
-          case None => ()
+        for (cs, rest) <- interpretBuffer(inputBuffer) do
+          performAction(cs)
+          inputBuffer = rest
+
+  private def interpretBuffer(inputBuffer : Queue[Char]) : Option[(CharSeq, Queue[Char])] =
+    inputBuffer.dequeueOption match
+      case Some(VT100.BS, tail) =>
+        Some(CharSeq.Backspace, tail)
+      case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
+        Some(CharSeq.Linefeed, tail)
+      case Some(VT100.CR, tail) =>
+        Some(CharSeq.CarriageReturn, tail)
+      case Some(VT100.ESC, tail) =>
+        if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
+        then Some(CharSeq.CursorBackwards(1), inputBuffer.drop(3))
+        else None
+      case Some(c, tail) => Some(CharSeq.NormalChar(c), tail)
+      case None => None
 
   private def performAction(charSeq : CharSeq) : Unit = charSeq match
     case CharSeq.Backspace => backspace()
