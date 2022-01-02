@@ -33,6 +33,8 @@ private class VT100Display(private val x : Int,
     then scroll()
     else cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
 
+  def cursorRightNoWrap() : Unit = if (cursor.x < VT100Display.WIDTH) then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
+  
   private def advanceCursor() : Unit =
     if cursor.x < VT100Display.WIDTH then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
 
