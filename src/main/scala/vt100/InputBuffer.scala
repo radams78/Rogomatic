@@ -21,6 +21,7 @@ private class InputBuffer(display : VT100Display) {
       case InputBuffer.CharSeq.Linefeed => display.lineFeed()
       case InputBuffer.CharSeq.CarriageReturn => display.carriageReturn()
       case InputBuffer.CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
+      case InputBuffer.CharSeq.CursorDown(n) => for i <- 1 to n do display.cursorDownNoScroll()
       case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
     }
 
@@ -49,6 +50,8 @@ object InputBuffer {
 
   private def interpretSequenceAfterCSI(contents : Queue[Char], parameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
+      case Some('B', tail) => 
+        Some(InputBuffer.CharSeq.CursorDown(if parameter == 0 then 1 else parameter), tail)
       case Some('D', tail) => 
         Some(InputBuffer.CharSeq.CursorBackwards(if parameter == 0 then 1 else parameter), tail)
       case Some(n, tail) if '0' <= n && n <= '9' => 
@@ -61,6 +64,7 @@ object InputBuffer {
     case Linefeed
     case CarriageReturn
     case CursorBackwards(n : Int)
+    case CursorDown(n : Int)
     case NormalChar(c : Char)
   }
 }

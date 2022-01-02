@@ -165,6 +165,7 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
   }
 
   // todo SO and SI chars etc.
+  // todo CPR sequence
 
   it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
       val terminal = VT100(23, 14)
@@ -185,4 +186,23 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorY() should be(14)
   }
 
+  it should "when given a CUB sequence with two digits, move the cursor multiple spaces left" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar(VT100.ESC)
+      terminal.sendChar('[')
+      terminal.sendChar('1')
+      terminal.sendChar('3')
+      terminal.sendChar('D')
+      terminal.getCursorX() should be(10)
+      terminal.getCursorY() should be(14)
+  }
+
+  it should "when given a CUD sequence with default parameter, move the cursor one line down" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar(VT100.ESC)
+      terminal.sendChar('[')
+      terminal.sendChar('B')
+      terminal.getCursorX() should be (23)
+      terminal.getCursorY() should be (15)
+  }
   // todo Input buffer overflow
