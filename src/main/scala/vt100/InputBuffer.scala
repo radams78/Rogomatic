@@ -35,21 +35,24 @@ object InputBuffer {
         Some(InputBuffer.CharSeq.Linefeed, tail)
       case Some(VT100.CR, tail) =>
         Some(InputBuffer.CharSeq.CarriageReturn, tail)
-      case Some(VT100.ESC, tail) => tail.dequeueOption match {
-        case Some('[', tail) => tail.dequeueOption match {
-          case Some('D', tail) => Some(InputBuffer.CharSeq.CursorBackwards(1), tail)
-          case Some('3', tail) => tail.dequeueOption match {
-            case Some('D', tail) =>  Some(InputBuffer.CharSeq.CursorBackwards(3), tail)
-            case _ => None
-          }
-          case _ => None
-        }
-        case _ => None
-      }
+      case Some(VT100.ESC, tail) => interpretSequenceAfterEscape(tail)
       case Some(c, tail) => Some(InputBuffer.CharSeq.NormalChar(c), tail)
       case None => None
     }
   }
+
+  private def interpretSequenceAfterEscape(contents : Queue[Char]) : Option[(InputBuffer.CharSeq, Queue[Char])] =
+    contents.dequeueOption match {
+      case Some('[', tail) => tail.dequeueOption match {
+        case Some('D', tail) => Some(InputBuffer.CharSeq.CursorBackwards(1), tail)
+        case Some('3', tail) => tail.dequeueOption match {
+          case Some('D', tail) =>  Some(InputBuffer.CharSeq.CursorBackwards(3), tail)
+          case _ => None
+        }
+        case _ => None
+      }
+      case _ => None
+    }
 
   private enum CharSeq {
     case Backspace
