@@ -240,5 +240,17 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(14)
   }
 
+  it should "when given a CUP sequence with default parameter, move the cursor home" in {
+    val terminal = VT100(23, 14)
+    terminal.sendChar(VT100.ESC)
+    terminal.sendChar('[')
+    terminal.sendChar('H')
+    terminal.getCursorX() should be(1)
+    terminal.getCursorY() should be(1)
+  }
+
+  // todo add parameters
+  // todo invalid parameters
+
   // todo Input buffer overflow
 }

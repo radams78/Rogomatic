@@ -23,6 +23,7 @@ private class InputBuffer(display : VT100Display) {
       case InputBuffer.CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
       case InputBuffer.CharSeq.CursorDown(n) => for i <- 1 to n do display.cursorDownNoScroll()
       case InputBuffer.CharSeq.CursorForwards(n) => for i <- 1 to n do display.cursorRightNoWrap()
+      case InputBuffer.CharSeq.CursorPosition(x, y) => display.cursorPosition(x, y)
       case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
     }
 
@@ -52,11 +53,13 @@ object InputBuffer {
   private def interpretSequenceAfterCSI(contents : Queue[Char], parameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
       case Some('B', tail) => 
-        Some(InputBuffer.CharSeq.CursorDown(if parameter == 0 then 1 else parameter), tail)
+        Some(CharSeq.CursorDown(if parameter == 0 then 1 else parameter), tail)
       case Some('C', tail) => 
-        Some(InputBuffer.CharSeq.CursorForwards(if parameter == 0 then 1 else parameter), tail)
+        Some(CharSeq.CursorForwards(if parameter == 0 then 1 else parameter), tail)
       case Some('D', tail) => 
-        Some(InputBuffer.CharSeq.CursorBackwards(if parameter == 0 then 1 else parameter), tail)
+        Some(CharSeq.CursorBackwards(if parameter == 0 then 1 else parameter), tail)
+      case Some('H', tail) =>
+        Some(CharSeq.CursorPosition(1,1), tail)
       case Some(n, tail) if '0' <= n && n <= '9' => 
         interpretSequenceAfterCSI(tail, parameter * 10 + n - '0')
       case _ => None
@@ -69,6 +72,7 @@ object InputBuffer {
     case CursorBackwards(n : Int)
     case CursorDown(n : Int)
     case CursorForwards(n : Int)
+    case CursorPosition(x : Int, y : Int)
     case NormalChar(c : Char)
   }
 }
