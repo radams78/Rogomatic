@@ -35,12 +35,17 @@ object InputBuffer {
         Some(InputBuffer.CharSeq.Linefeed, tail)
       case Some(VT100.CR, tail) =>
         Some(InputBuffer.CharSeq.CarriageReturn, tail)
-      case Some(VT100.ESC, tail) => 
-        if contents.lift(1) == Some('[') && contents.lift(2) == Some('D')
-        then Some(InputBuffer.CharSeq.CursorBackwards(1), contents.drop(3))
-        else if contents.lift(1) == Some('[') && contents.lift(2) == Some('3') && contents.lift(3) == Some('D')
-        then Some(InputBuffer.CharSeq.CursorBackwards(3), contents.drop(4))
-        else None
+      case Some(VT100.ESC, tail) => tail.dequeueOption match {
+        case Some('[', tail) => tail.dequeueOption match {
+          case Some('D', tail) => Some(InputBuffer.CharSeq.CursorBackwards(1), tail)
+          case Some('3', tail) => tail.dequeueOption match {
+            case Some('D', tail) =>  Some(InputBuffer.CharSeq.CursorBackwards(3), tail)
+            case _ => None
+          }
+          case _ => None
+        }
+        case _ => None
+      }
       case Some(c, tail) => Some(InputBuffer.CharSeq.NormalChar(c), tail)
       case None => None
     }
