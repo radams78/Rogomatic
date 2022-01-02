@@ -41,7 +41,6 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorY() should be (1)
   }
 
-  //todo should not go into input buffer
   it should "ignore a NUL character" in {
       val terminal = VT100()
       terminal.sendChar(VT100.NUL)
@@ -50,7 +49,6 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorY() should be (1)     
   }
 
-  //todo should not go into input buffer
   it should "ignore a DEL character" in {
       val terminal = VT100()
       terminal.sendChar(VT100.DEL)
@@ -168,12 +166,22 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
 
   // todo SO and SI chars etc.
 
-  it should "when given a CUB sequence, move the cursor left" in {
+  it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
       val terminal = VT100(23, 14)
       terminal.sendChar(VT100.ESC)
       terminal.sendChar('[')
       terminal.sendChar('D')
       terminal.getCursorX() should be(22)
+      terminal.getCursorY() should be(14)
+  }
+
+  it should "when given a CUB sequence, move the cursor multiple spaces left" in {
+      val terminal = VT100(23, 14)
+      terminal.sendChar(VT100.ESC)
+      terminal.sendChar('[')
+      terminal.sendChar('3')
+      terminal.sendChar('D')
+      terminal.getCursorX() should be(20)
       terminal.getCursorY() should be(14)
   }
 
