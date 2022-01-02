@@ -1,5 +1,8 @@
+package vt100
+
 import scala.collection.immutable.Queue
-class InputBuffer(display : VT100Display) {
+
+private class InputBuffer(display : VT100Display) {
     private var contents : Queue[Char] = Queue()
     
     def add(char: Char) : Unit = char match {

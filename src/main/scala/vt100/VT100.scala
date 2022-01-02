@@ -1,3 +1,5 @@
+package vt100
+
 import scala.collection.immutable.Queue
 import scala.collection.mutable.Stack
 import java.{util => ju}

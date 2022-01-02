@@ -1,4 +1,8 @@
-class VT100Display(x : Int, y : Int, screenContents : String):
+package vt100
+
+private class VT100Display(private val x : Int, 
+                   private val y : Int, 
+                   private val screenContents : String) {
   private var cursor : VT100Display.Cursor = VT100Display.Cursor(x, y)
 
   private var screen : Array[Array[Char]] = 
@@ -13,11 +17,12 @@ class VT100Display(x : Int, y : Int, screenContents : String):
 
   def getCursorY() : Int = cursor.y
 
-  def printChar(char : Char) : Unit = 
+  def printChar(char : Char) : Unit = {
       screen(cursor.y - 1)(cursor.x - 1) = char
       advanceCursor()
+  }
 
-  def backspace() : Unit = if (cursor.x > 1) cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
+  def backspace() : Unit = if (cursor.x > 1) then cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
 
   def carriageReturn() : Unit = cursor = VT100Display.Cursor(1, cursor.y)
 
@@ -29,11 +34,13 @@ class VT100Display(x : Int, y : Int, screenContents : String):
   private def advanceCursor() : Unit =
     if cursor.x < VT100Display.WIDTH then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
 
-  private def scroll() : Unit =
+  private def scroll() : Unit = {
     for y <- 0 until VT100Display.HEIGHT - 1 do screen(y) = screen(y+1)
     screen(VT100Display.HEIGHT - 1) = Array.fill(VT100Display.WIDTH)(' ')
+  }
+}
 
-object VT100Display:
+object VT100Display {
   private val WIDTH = 80
   private val HEIGHT = 24
 
@@ -42,3 +49,4 @@ object VT100Display:
     assert(x <= WIDTH, s"Cursor moved off right edge of screen: ($x,$y)")
     assert(y > 0, s"Cursor moved off top of screen: ($x,$y)")
     assert(y <= HEIGHT, s"Cursor moved off bottom of screen: ($x,$y)")
+}

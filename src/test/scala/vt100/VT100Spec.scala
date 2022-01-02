@@ -1,3 +1,5 @@
+package vt100
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
