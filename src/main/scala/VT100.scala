@@ -21,27 +21,27 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
           performAction(cs)
           inputBuffer = rest
 
-  private def interpretBuffer(inputBuffer : InputBuffer) : Option[(CharSeq, InputBuffer)] =
+  private def interpretBuffer(inputBuffer : InputBuffer) : Option[(InputBuffer.CharSeq, InputBuffer)] =
     inputBuffer.dequeueOption match
       case Some(VT100.BS, tail) =>
-        Some(CharSeq.Backspace, tail)
+        Some(InputBuffer.CharSeq.Backspace, tail)
       case Some(c, tail) if c == VT100.LF || c == VT100.VT || c == VT100.FF => 
-        Some(CharSeq.Linefeed, tail)
+        Some(InputBuffer.CharSeq.Linefeed, tail)
       case Some(VT100.CR, tail) =>
-        Some(CharSeq.CarriageReturn, tail)
+        Some(InputBuffer.CharSeq.CarriageReturn, tail)
       case Some(VT100.ESC, tail) =>
         if inputBuffer.lift(1) == Some('[') && inputBuffer.lift(2) == Some('D')
-        then Some(CharSeq.CursorBackwards(1), inputBuffer.drop(3))
+        then Some(InputBuffer.CharSeq.CursorBackwards(1), inputBuffer.drop(3))
         else None
-      case Some(c, tail) => Some(CharSeq.NormalChar(c), tail)
+      case Some(c, tail) => Some(InputBuffer.CharSeq.NormalChar(c), tail)
       case None => None
 
-  private def performAction(charSeq : CharSeq) : Unit = charSeq match
-    case CharSeq.Backspace => display.backspace()
-    case CharSeq.Linefeed => display.lineFeed()
-    case CharSeq.CarriageReturn => display.carriageReturn()
-    case CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
-    case CharSeq.NormalChar(c) => display.printChar(c)
+  private def performAction(charSeq : InputBuffer.CharSeq) : Unit = charSeq match
+    case InputBuffer.CharSeq.Backspace => display.backspace()
+    case InputBuffer.CharSeq.Linefeed => display.lineFeed()
+    case InputBuffer.CharSeq.CarriageReturn => display.carriageReturn()
+    case InputBuffer.CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
+    case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
 
   private enum CharSeq:
     case Backspace
