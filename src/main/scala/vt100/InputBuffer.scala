@@ -43,17 +43,16 @@ object InputBuffer {
 
   private def interpretSequenceAfterEscape(contents : Queue[Char]) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
-      case Some('[', tail) => interpretSequenceAfterCSI(tail)
+      case Some('[', tail) => interpretSequenceAfterCSI(tail, 0)
       case _ => None
     }
 
-  private def interpretSequenceAfterCSI(contents : Queue[Char]) : Option[(CharSeq, Queue[Char])] =
+  private def interpretSequenceAfterCSI(contents : Queue[Char], parameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
-      case Some('D', tail) => Some(InputBuffer.CharSeq.CursorBackwards(1), tail)
-      case Some('3', tail) => tail.dequeueOption match {
-        case Some('D', tail) =>  Some(InputBuffer.CharSeq.CursorBackwards(3), tail)
-        case _ => None
-      }
+      case Some('D', tail) => 
+        Some(InputBuffer.CharSeq.CursorBackwards(if parameter == 0 then 1 else parameter), tail)
+      case Some(n, tail) if '0' <= n && n <= '9' => 
+        interpretSequenceAfterCSI(tail, parameter * 10 + n - '0')
       case _ => None
     }
 
