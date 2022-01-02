@@ -3,8 +3,8 @@ import scala.collection.mutable.Stack
 import java.{util => ju}
 
 class VT100(x : Int = 1, y : Int = 1, screenContents : String = "") {
-  private var display : VT100Display = VT100Display(x, y, screenContents)
-  private var inputBuffer : InputBuffer = InputBuffer(display = display)
+  private val display : VT100Display = VT100Display(x, y, screenContents)
+  private val inputBuffer : InputBuffer = InputBuffer(display = display)
   
   def getScreen() : Seq[String] = display.getScreen()
 
