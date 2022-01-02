@@ -205,4 +205,14 @@ class VT100Scala extends AnyFlatSpec with should.Matchers:
       terminal.getCursorX() should be (23)
       terminal.getCursorY() should be (15)
   }
+
+    it should "when given a CUD sequence when at the bottom of the screen, do nothing" in {
+      val terminal = VT100(23, 24)
+      terminal.sendChar(VT100.ESC)
+      terminal.sendChar('[')
+      terminal.sendChar('B')
+      terminal.getCursorX() should be (23)
+      terminal.getCursorY() should be (24)
+  }
+
   // todo Input buffer overflow

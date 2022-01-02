@@ -25,9 +25,9 @@ private class VT100Display(private val x : Int,
   def backspace() : Unit = if (cursor.x > 1) then cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
 
   def carriageReturn() : Unit = cursor = VT100Display.Cursor(1, cursor.y)
+ 
+  def cursorDownNoScroll() : Unit = if (cursor.y < VT100Display.HEIGHT) then cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
 
-  def cursorDownNoScroll() : Unit = cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
-  
   def lineFeed() : Unit =
     if cursor.y == VT100Display.HEIGHT
     then scroll()
