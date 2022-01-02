@@ -1,9 +1,10 @@
 import scala.collection.immutable.Queue
 class InputBuffer(display : VT100Display) {
     private var contents : Queue[Char] = Queue()
+    
     def add(char: Char) : Unit = char match {
       case VT100.NUL | VT100.DEL => ()
-      case char => {// TODO Keep consuming characters until we cannot any more
+      case char => {
         contents = contents :+ char
         for (cs, rest) <- InputBuffer.interpretBuffer(contents) do {
           performAction(cs)
