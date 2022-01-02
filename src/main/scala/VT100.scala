@@ -43,13 +43,6 @@ class VT100(x : Int = 1, y : Int = 1, screenContents : String = ""):
     case InputBuffer.CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
     case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
 
-  private enum CharSeq:
-    case Backspace
-    case Linefeed
-    case CarriageReturn
-    case CursorBackwards(n : Int)
-    case NormalChar(c : Char)
-
 object VT100:
   val NUL = '\u0000'
   val BS = '\u0008'
