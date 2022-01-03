@@ -9,8 +9,7 @@ class VT100(display : IDisplay, inputBuffer : IInputBuffer, transmitter : Transm
 
   def sendChar(char : Char) : Unit = inputBuffer.add(char)
 
-  def press(char : Char) : Unit =
-    for h <- host do h.sendChar(char)
+  def press(char : Char) : Unit = transmitter.transmit(char)
 }
 
 object VT100 {
