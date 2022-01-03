@@ -26,6 +26,6 @@ object VT100 {
 
   def apply(x : Int = 1, y : Int = 1, screenContents : String = "") = {
     val display = VT100Display(x, y, screenContents)
-    new VT100(display, InputBuffer(display, Interpreter(display)))
+    new VT100(display, InputBuffer(Interpreter(display)))
   }
 }
