@@ -18,7 +18,7 @@ private class InputBuffer(display : VT100Display, interpreter : Interpreter) {
 
     private def performAction(charSeq : InputBuffer.CharSeq) : Unit = charSeq match {
       case InputBuffer.CharSeq.Backspace => interpreter.backspace()
-      case InputBuffer.CharSeq.Linefeed => display.lineFeed()
+      case InputBuffer.CharSeq.Linefeed => interpreter.lineFeed()
       case InputBuffer.CharSeq.CarriageReturn => display.carriageReturn()
       case InputBuffer.CharSeq.CursorBackwards(n) => interpreter.cursorBackwards(n)
       case InputBuffer.CharSeq.CursorDown(n) => for i <- 1 to n do display.cursorDownNoScroll()

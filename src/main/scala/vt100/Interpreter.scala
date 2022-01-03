@@ -7,7 +7,6 @@ class Interpreter(display : VT100Display) {
         if display.getCursorY() == VT100Display.HEIGHT
         then display.scroll()
         else display.moveCursorDown()
-
   
     def cursorBackwards(n : Int) : Unit = {
         assert(n >= 0)

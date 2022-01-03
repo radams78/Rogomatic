@@ -34,11 +34,6 @@ private class VT100Display(private val x : Int,
  
   def cursorDownNoScroll() : Unit = if (cursor.y < VT100Display.HEIGHT) then cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
 
-  def lineFeed() : Unit =
-    if cursor.y == VT100Display.HEIGHT
-    then scroll()
-    else cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
-
   def cursorRightNoWrap() : Unit = if (cursor.x < VT100Display.WIDTH) then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
 
   def cursorPosition(x : Int, y : Int) : Unit = cursor = VT100Display.Cursor(x, y) 
