@@ -8,6 +8,8 @@ class Interpreter(display : VT100Display) {
         then display.scroll()
         else display.moveCursorDown()
   
+    def carriageReturn() : Unit = display.setCursorX(1)
+
     def cursorBackwards(n : Int) : Unit = {
         assert(n >= 0)
         val distance = if n == 0 then 1 else n
