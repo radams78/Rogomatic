@@ -1,5 +1,5 @@
 package vt100
 
-trait IInputBuffer {
+private trait IInputBuffer {
   def add(char : Char) : Unit
 }
