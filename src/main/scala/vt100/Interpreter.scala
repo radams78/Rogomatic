@@ -23,7 +23,7 @@ class Interpreter(display : VT100Display) {
         display.setCursorY((display.getCursorY() + distance).min(VT100Display.HEIGHT))
     }
 
-    def CursorForwards(n : Int) : Unit = {
+    def cursorForwards(n : Int) : Unit = {
         assert(n >= 0)
         val distance = if n == 0 then 1 else n
         display.setCursorX((display.getCursorX() + distance).min(VT100Display.WIDTH))

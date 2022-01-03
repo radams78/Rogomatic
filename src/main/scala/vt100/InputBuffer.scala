@@ -23,7 +23,7 @@ private class InputBuffer(display : VT100Display, interpreter : Interpreter) {
       case InputBuffer.CharSeq.CarriageReturn => interpreter.carriageReturn()
       case InputBuffer.CharSeq.CursorBackwards(n) => interpreter.cursorBackwards(n)
       case InputBuffer.CharSeq.CursorDown(n) => interpreter.cursorDown(n)
-      case InputBuffer.CharSeq.CursorForwards(n) => for i <- 1 to n do display.cursorRightNoWrap()
+      case InputBuffer.CharSeq.CursorForwards(n) => interpreter.cursorForwards(n)
       case InputBuffer.CharSeq.CursorPosition(x, y) => display.cursorPosition(x, y)
       case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
     }
