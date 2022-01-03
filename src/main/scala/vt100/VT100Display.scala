@@ -22,8 +22,6 @@ private class VT100Display(private val x : Int,
       advanceCursor()
   }
 
-  def moveCursorLeft(distance : Int = 1) : Unit = cursor = VT100Display.Cursor(cursor.x - distance, cursor.y)
-
   def moveCursorDown() : Unit = cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
 
   def setCursorX(x : Int) : Unit = cursor = VT100Display.Cursor(x, cursor.y)
