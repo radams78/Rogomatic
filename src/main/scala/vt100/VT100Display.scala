@@ -24,6 +24,8 @@ private class VT100Display(private val x : Int,
 
   def moveCursorLeft(distance : Int = 1) : Unit = cursor = VT100Display.Cursor(cursor.x - distance, cursor.y)
 
+  def moveCursorDown() : Unit = cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)
+
   def setCursorX(x : Int) : Unit = cursor = VT100Display.Cursor(x, cursor.y)
 
   def backspace() : Unit = if (cursor.x > 1) then cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
@@ -44,7 +46,7 @@ private class VT100Display(private val x : Int,
   private def advanceCursor() : Unit =
     if cursor.x < VT100Display.WIDTH then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
 
-  private def scroll() : Unit = {
+  def scroll() : Unit = {
     for y <- 0 until VT100Display.HEIGHT - 1 do screen(y) = screen(y+1)
     screen(VT100Display.HEIGHT - 1) = Array.fill(VT100Display.WIDTH)(' ')
   }
@@ -52,7 +54,7 @@ private class VT100Display(private val x : Int,
 
 object VT100Display {
   private val WIDTH = 80
-  private val HEIGHT = 24
+  val HEIGHT = 24
 
   private case class Cursor(x : Int, y : Int):
     assert(x > 0, s"Cursor moved off left edge of screen: ($x,$y)")

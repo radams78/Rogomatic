@@ -1,7 +1,13 @@
 package vt100
 
 class Interpreter(display : VT100Display) {
-    def backspace() : Unit = if (display.getCursorX() != 1) display.moveCursorLeft()
+    def backspace() : Unit = if display.getCursorX() != 1 then display.moveCursorLeft()
+
+    def lineFeed() : Unit = 
+        if display.getCursorY() == VT100Display.HEIGHT
+        then display.scroll()
+        else display.moveCursorDown()
+
   
     def cursorBackwards(n : Int) : Unit = {
         assert(n >= 0)
