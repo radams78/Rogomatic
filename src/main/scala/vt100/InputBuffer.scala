@@ -46,22 +46,28 @@ object InputBuffer {
 
   private def interpretSequenceAfterEscape(contents : Queue[Char]) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
-      case Some('[', tail) => interpretSequenceAfterCSI(tail, 0)
+      case Some('[', tail) => interpretSequenceAfterCSI(tail, Seq(), 0)
       case _ => None
     }
 
-  private def interpretSequenceAfterCSI(contents : Queue[Char], parameter : Int) : Option[(CharSeq, Queue[Char])] =
+  private def interpretSequenceAfterCSI(contents : Queue[Char], parameters : Seq[Int], currentParameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
       case Some('B', tail) => 
-        Some(CharSeq.CursorDown(if parameter == 0 then 1 else parameter), tail)
+        Some(CharSeq.CursorDown(if currentParameter == 0 then 1 else currentParameter), tail)
       case Some('C', tail) => 
-        Some(CharSeq.CursorForwards(if parameter == 0 then 1 else parameter), tail)
+        Some(CharSeq.CursorForwards(if currentParameter == 0 then 1 else currentParameter), tail)
       case Some('D', tail) => 
-        Some(CharSeq.CursorBackwards(if parameter == 0 then 1 else parameter), tail)
-      case Some('H', tail) =>
-        Some(CharSeq.CursorPosition(1,1), tail)
+        Some(CharSeq.CursorBackwards(if currentParameter == 0 then 1 else currentParameter), tail)
+      case Some('H', tail) => parameters match {
+        case Nil => if currentParameter == 0 then Some(CharSeq.CursorPosition(1, 1), tail) else None
+        case y :: Nil => 
+          Some(CharSeq.CursorPosition(if currentParameter == 0 then 1 else currentParameter, if y == 0 then 1 else y), tail)
+        case _ => None
+      }
       case Some(n, tail) if '0' <= n && n <= '9' => 
-        interpretSequenceAfterCSI(tail, parameter * 10 + n - '0')
+        interpretSequenceAfterCSI(tail, parameters, currentParameter * 10 + n - '0')
+      case Some(';', tail) =>
+        interpretSequenceAfterCSI(tail, parameters :+ currentParameter, 0)
       case _ => None
     }
 
