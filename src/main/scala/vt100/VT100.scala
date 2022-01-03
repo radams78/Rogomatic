@@ -7,9 +7,9 @@ class VT100 private (display : IDisplay, inputBuffer : IInputBuffer, transmitter
 
   def getCursorY() : Int = display.getCursorY()
 
-  def sendChar(char : Char) : Unit = inputBuffer.add(char)
-
   def press(char : Char) : Unit = transmitter.transmit(char)
+
+  private[vt100] def sendChar(char : Char) : Unit = inputBuffer.add(char)
 }
 
 object VT100 {
