@@ -6,7 +6,7 @@ import scala.compiletime.ops.int
 private class InputBuffer(interpreter : Interpreter) extends IInputBuffer {
     private var contents : Queue[Char] = Queue()
     
-    def add(char: Char) : Unit = char match {
+    override def add(char: Char) : Unit = char match {
       case VT100.NUL | VT100.DEL => ()
       case char => {
         contents = contents :+ char
