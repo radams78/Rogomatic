@@ -3,7 +3,7 @@ package vt100
 import scala.collection.immutable.Queue
 import scala.compiletime.ops.int
 
-private class InputBuffer(interpreter : Interpreter) {
+private class InputBuffer(interpreter : Interpreter) extends IInputBuffer {
     private var contents : Queue[Char] = Queue()
     
     def add(char: Char) : Unit = char match {
