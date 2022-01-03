@@ -22,6 +22,8 @@ private class VT100Display(private val x : Int,
       advanceCursor()
   }
 
+  def moveCursorLeft() : Unit = cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
+
   def backspace() : Unit = if (cursor.x > 1) then cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
 
   def carriageReturn() : Unit = cursor = VT100Display.Cursor(1, cursor.y)
