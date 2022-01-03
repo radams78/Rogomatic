@@ -261,6 +261,20 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
     terminal.getCursorX() should be(16)
     terminal.getCursorY() should be(7)
   }
+
+  it should "ignore a CUP sequence with invalid parameters" in {
+    val terminal = VT100(23, 14)
+    terminal.sendChar(VT100.ESC)
+    terminal.sendChar('[')
+    terminal.sendChar('9')
+    terminal.sendChar('9')
+    terminal.sendChar(';')
+    terminal.sendChar('9')
+    terminal.sendChar('9')
+    terminal.sendChar('H')
+    terminal.getCursorX() should be(23)
+    terminal.getCursorY() should be(14)
+  }
   // todo invalid parameters
 
   // todo Input buffer overflow

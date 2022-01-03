@@ -29,12 +29,13 @@ class Interpreter(display : VT100Display) {
         display.setCursorX((display.getCursorX() + distance).min(VT100Display.WIDTH))
     }
 
-    def cursorPosition(y : Int, x : Int) = {
+    def cursorPosition(y : Int, x : Int) : Unit = {
         assert(y >= 0)
         assert(x >= 0)
+        if (y > VT100Display.HEIGHT) then return
+        if (x > VT100Display.WIDTH) then return
         val line = y.max(1)
         val column = x.max(1)
-        // todo What if x > WIDTH or y > HEIGHT?
         display.setCursorX(column)
         display.setCursorY(line)
     }
