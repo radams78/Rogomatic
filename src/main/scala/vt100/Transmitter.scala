@@ -1,5 +1,5 @@
 package vt100
 
-class Transmitter {
+class Transmitter(host : Option[IHost]) {
   
 }
