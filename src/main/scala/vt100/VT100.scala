@@ -1,13 +1,13 @@
 package vt100
 
 class VT100 private (display : IDisplay, inputBuffer : IInputBuffer, keyboard : IKeyboard) extends IVT100 {
-  def getScreen() : Seq[String] = display.getScreen()
+  override def getScreen() : Seq[String] = display.getScreen()
 
-  def getCursorX() : Int = display.getCursorX()
+  override def getCursorX() : Int = display.getCursorX()
 
-  def getCursorY() : Int = display.getCursorY()
+  override def getCursorY() : Int = display.getCursorY()
 
-  def press(char : Char) : Unit = keyboard.press(char)
+  override def press(char : Char) : Unit = keyboard.press(char)
 
   private[vt100] def sendChar(char : Char) : Unit = inputBuffer.add(char)
 }
