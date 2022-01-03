@@ -284,7 +284,28 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
     terminal.sendChar('A')
     terminal.getCursorX() should be(23)
     terminal.getCursorY() should be(5)
+  }
 
+  it should "when a letter key is pressed, transmit the appropriate code to the host" in {
+    object MockHost extends IHost {
+        var receivedSignal = false
+
+        override def sendChar(char : Char) : Unit = {
+            char should be ('A')
+            receivedSignal = true
+        }
+    }
+    val terminal = VT100(MockHost)
+    terminal.press('A')
+    MockHost should be (Symbol("receivedSignal"))
   }
   // todo Input buffer overflow
+
+  // todo DECALN
+  // todo DECDHL
+  // todo DECDWL
+  // todo DECID
+  // todo DECKPAM
+  // todo DECKPNM
+  // todo DECLL ETC
 }

@@ -4,7 +4,7 @@ import scala.collection.immutable.Queue
 import scala.collection.mutable.Stack
 import java.{util => ju}
 
-class VT100(display : VT100Display, inputBuffer : InputBuffer) {
+class VT100(display : VT100Display, inputBuffer : InputBuffer, host : Option[IHost]) {
   def getScreen() : Seq[String] = display.getScreen()
 
   def getCursorX() : Int = display.getCursorX()
@@ -12,6 +12,9 @@ class VT100(display : VT100Display, inputBuffer : InputBuffer) {
   def getCursorY() : Int = display.getCursorY()
 
   def sendChar(char : Char) : Unit = inputBuffer.add(char)
+
+  def press(char : Char) : Unit =
+    for h <- host do h.sendChar(char)
 }
 
 object VT100 {
@@ -24,8 +27,13 @@ object VT100 {
   val ESC = '\u001b'
   val DEL = '\u007f'
 
-  def apply(x : Int = 1, y : Int = 1, screenContents : String = "") = {
+  def apply(x : Int = 1, y : Int = 1, screenContents : String = "") : VT100= {
     val display = VT100Display(x, y, screenContents)
-    new VT100(display, InputBuffer(Interpreter(display)))
+    new VT100(display, InputBuffer(Interpreter(display)), None)
+  }
+
+  def apply(host : IHost) : VT100 = {
+    val display = VT100Display(1, 1, "")
+    new VT100(display, InputBuffer(Interpreter(display)), Some(host))
   }
 }
