@@ -20,7 +20,7 @@ private class InputBuffer(display : VT100Display, interpreter : Interpreter) {
       case InputBuffer.CharSeq.Backspace => interpreter.backspace()
       case InputBuffer.CharSeq.Linefeed => display.lineFeed()
       case InputBuffer.CharSeq.CarriageReturn => display.carriageReturn()
-      case InputBuffer.CharSeq.CursorBackwards(n) => for i <- 1 to n do display.backspace()
+      case InputBuffer.CharSeq.CursorBackwards(n) => interpreter.cursorBackwards(n)
       case InputBuffer.CharSeq.CursorDown(n) => for i <- 1 to n do display.cursorDownNoScroll()
       case InputBuffer.CharSeq.CursorForwards(n) => for i <- 1 to n do display.cursorRightNoWrap()
       case InputBuffer.CharSeq.CursorPosition(x, y) => display.cursorPosition(x, y)
