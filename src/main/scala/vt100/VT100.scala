@@ -1,9 +1,5 @@
 package vt100
 
-import scala.collection.immutable.Queue
-import scala.collection.mutable.Stack
-import java.{util => ju}
-
 class VT100(display : VT100Display, inputBuffer : InputBuffer, host : Option[IHost]) {
   def getScreen() : Seq[String] = display.getScreen()
 
