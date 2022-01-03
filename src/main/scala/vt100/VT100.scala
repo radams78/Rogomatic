@@ -1,6 +1,6 @@
 package vt100
 
-class VT100(display : VT100Display, inputBuffer : InputBuffer, host : Option[IHost]) {
+class VT100(display : IDisplay, inputBuffer : InputBuffer, host : Option[IHost]) {
   def getScreen() : Seq[String] = display.getScreen()
 
   def getCursorX() : Int = display.getCursorX()

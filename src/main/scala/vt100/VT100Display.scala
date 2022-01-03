@@ -2,7 +2,7 @@ package vt100
 
 private class VT100Display(private val x : Int, 
                    private val y : Int, 
-                   private val screenContents : String) {
+                   private val screenContents : String) extends IDisplay {
   private var cursor : VT100Display.Cursor = VT100Display.Cursor(x, y)
 
   private var screen : Array[Array[Char]] = 
