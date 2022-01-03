@@ -56,13 +56,12 @@ object InputBuffer {
       case Some('B', tail) => 
         Some(CharSeq.CursorDown(currentParameter), tail)
       case Some('C', tail) => 
-        Some(CharSeq.CursorForwards(if currentParameter == 0 then 1 else currentParameter), tail)
+        Some(CharSeq.CursorForwards(currentParameter), tail)
       case Some('D', tail) => 
-        Some(CharSeq.CursorBackwards(if currentParameter == 0 then 1 else currentParameter), tail)
+        Some(CharSeq.CursorBackwards(currentParameter), tail)
       case Some('H', tail) => parameters match {
-        case Nil => if currentParameter == 0 then Some(CharSeq.CursorPosition(1, 1), tail) else None
-        case y :: Nil => 
-          Some(CharSeq.CursorPosition(y, currentParameter), tail)
+        case Nil => if currentParameter == 0 then Some(CharSeq.CursorPosition(0, 0), tail) else None
+        case y :: Nil => Some(CharSeq.CursorPosition(y, currentParameter), tail)
         case _ => None
       }
       case Some(n, tail) if '0' <= n && n <= '9' => 
@@ -79,7 +78,7 @@ object InputBuffer {
     case CursorBackwards(n : Int)
     case CursorDown(n : Int)
     case CursorForwards(n : Int)
-    case CursorPosition(x : Int, y : Int)
+    case CursorPosition(y : Int, x : Int)
     case NormalChar(c : Char)
   }
 }
