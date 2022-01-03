@@ -28,6 +28,8 @@ private class VT100Display(private val x : Int,
 
   def setCursorX(x : Int) : Unit = cursor = VT100Display.Cursor(x, cursor.y)
 
+  def setCursorY(y : Int) : Unit = cursor = VT100Display.Cursor(cursor.x, y)
+  
   def backspace() : Unit = if (cursor.x > 1) then cursor = VT100Display.Cursor(cursor.x - 1, cursor.y)
 
   def cursorDownNoScroll() : Unit = if (cursor.y < VT100Display.HEIGHT) then cursor = VT100Display.Cursor(cursor.x, cursor.y + 1)

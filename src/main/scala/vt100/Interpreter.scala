@@ -15,4 +15,10 @@ class Interpreter(display : VT100Display) {
         val distance = if n == 0 then 1 else n
         if (display.getCursorX() - n < 0) display.setCursorX(1) else display.moveCursorLeft(distance)
     }
+
+    def cursorDown(n : Int) : Unit = {
+        assert(n >= 0)
+        val distance = if n == 0 then 1 else n
+        display.setCursorY((display.getCursorY()+distance).max(VT100Display.HEIGHT))
+    }
 }
