@@ -1,6 +1,6 @@
 package vt100
 
-class VT100(display : IDisplay, inputBuffer : IInputBuffer, transmitter : Transmitter, host : Option[IHost]) {
+class VT100(display : IDisplay, inputBuffer : IInputBuffer, transmitter : Transmitter) {
   def getScreen() : Seq[String] = display.getScreen()
 
   def getCursorX() : Int = display.getCursorX()
@@ -24,11 +24,11 @@ object VT100 {
 
   def apply(x : Int = 1, y : Int = 1, screenContents : String = "") : VT100 = {
     val display = VT100Display(x, y, screenContents)
-    new VT100(display, InputBuffer(Interpreter(display)), Transmitter(None), None)
+    new VT100(display, InputBuffer(Interpreter(display)), Transmitter(None))
   }
 
   def apply(host : IHost) : VT100 = {
     val display = VT100Display(1, 1, "")
-    new VT100(display, InputBuffer(Interpreter(display)), Transmitter(Some(host)), Some(host))
+    new VT100(display, InputBuffer(Interpreter(display)), Transmitter(Some(host)))
   }
 }
