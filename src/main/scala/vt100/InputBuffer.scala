@@ -25,7 +25,7 @@ private class InputBuffer(display : VT100Display, interpreter : Interpreter) {
       case InputBuffer.CharSeq.CursorDown(n) => interpreter.cursorDown(n)
       case InputBuffer.CharSeq.CursorForwards(n) => interpreter.cursorForwards(n)
       case InputBuffer.CharSeq.CursorPosition(y, x) => interpreter.cursorPosition(y, x)
-      case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
+      case InputBuffer.CharSeq.NormalChar(c) => interpreter.printChar(c)
     }
 
 }

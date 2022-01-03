@@ -17,10 +17,7 @@ private class VT100Display(private val x : Int,
 
   def getCursorY() : Int = cursor.y
 
-  def printChar(char : Char) : Unit = {
-      screen(cursor.y - 1)(cursor.x - 1) = char
-      advanceCursor()
-  }
+  def putChar(c : Char) = screen(cursor.y - 1)(cursor.x - 1) = c
 
   def setCursorX(x : Int) : Unit = cursor = VT100Display.Cursor(x, cursor.y)
 
