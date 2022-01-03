@@ -23,7 +23,7 @@ object VT100 {
   val ESC = '\u001b'
   val DEL = '\u007f'
 
-  def apply(x : Int = 1, y : Int = 1, screenContents : String = "") : VT100= {
+  def apply(x : Int = 1, y : Int = 1, screenContents : String = "") : VT100 = {
     val display = VT100Display(x, y, screenContents)
     new VT100(display, InputBuffer(Interpreter(display)), None)
   }
