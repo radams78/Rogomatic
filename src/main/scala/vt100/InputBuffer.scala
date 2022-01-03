@@ -24,7 +24,7 @@ private class InputBuffer(display : VT100Display, interpreter : Interpreter) {
       case InputBuffer.CharSeq.CursorBackwards(n) => interpreter.cursorBackwards(n)
       case InputBuffer.CharSeq.CursorDown(n) => interpreter.cursorDown(n)
       case InputBuffer.CharSeq.CursorForwards(n) => interpreter.cursorForwards(n)
-      case InputBuffer.CharSeq.CursorPosition(x, y) => display.cursorPosition(x, y)
+      case InputBuffer.CharSeq.CursorPosition(y, x) => interpreter.cursorPosition(y, x)
       case InputBuffer.CharSeq.NormalChar(c) => display.printChar(c)
     }
 
@@ -54,7 +54,7 @@ object InputBuffer {
   private def interpretSequenceAfterCSI(contents : Queue[Char], parameters : Seq[Int], currentParameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
       case Some('B', tail) => 
-        Some(CharSeq.CursorDown(if currentParameter == 0 then 1 else currentParameter), tail)
+        Some(CharSeq.CursorDown(currentParameter), tail)
       case Some('C', tail) => 
         Some(CharSeq.CursorForwards(if currentParameter == 0 then 1 else currentParameter), tail)
       case Some('D', tail) => 
@@ -62,7 +62,7 @@ object InputBuffer {
       case Some('H', tail) => parameters match {
         case Nil => if currentParameter == 0 then Some(CharSeq.CursorPosition(1, 1), tail) else None
         case y :: Nil => 
-          Some(CharSeq.CursorPosition(if currentParameter == 0 then 1 else currentParameter, if y == 0 then 1 else y), tail)
+          Some(CharSeq.CursorPosition(y, currentParameter), tail)
         case _ => None
       }
       case Some(n, tail) if '0' <= n && n <= '9' => 
