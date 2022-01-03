@@ -26,8 +26,6 @@ private class VT100Display(private val x : Int,
 
   def setCursorY(y : Int) : Unit = cursor = VT100Display.Cursor(cursor.x, y)
 
-  def cursorRightNoWrap() : Unit = if (cursor.x < VT100Display.WIDTH) then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
-
   def cursorPosition(x : Int, y : Int) : Unit = cursor = VT100Display.Cursor(x, y) 
 
   private def advanceCursor() : Unit =
