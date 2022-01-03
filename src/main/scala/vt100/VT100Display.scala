@@ -23,9 +23,6 @@ private class VT100Display(private val x : Int,
 
   def setCursorY(y : Int) : Unit = cursor = VT100Display.Cursor(cursor.x, y)
 
-  private def advanceCursor() : Unit =
-    if cursor.x < VT100Display.WIDTH then cursor = VT100Display.Cursor(cursor.x + 1, cursor.y)
-
   def scroll() : Unit = {
     for y <- 0 until VT100Display.HEIGHT - 1 do screen(y) = screen(y+1)
     screen(VT100Display.HEIGHT - 1) = Array.fill(VT100Display.WIDTH)(' ')
