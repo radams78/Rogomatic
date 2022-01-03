@@ -1,6 +1,6 @@
 package vt100
 
-class Interpreter(display : VT100Display) {
+private class Interpreter(display : VT100Display) {
     def printChar(c : Char) : Unit = {
       display.putChar(c)
       display.setCursorX((display.getCursorX() + 1).min(VT100Display.WIDTH))
