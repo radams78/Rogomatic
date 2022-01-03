@@ -275,7 +275,16 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
     terminal.getCursorX() should be(23)
     terminal.getCursorY() should be(14)
   }
-  // todo invalid parameters
 
+  it should "interpret a CUU sequence" in {
+    val terminal = VT100(23, 14)
+    terminal.sendChar(VT100.ESC)
+    terminal.sendChar('[')
+    terminal.sendChar('9')
+    terminal.sendChar('A')
+    terminal.getCursorX() should be(23)
+    terminal.getCursorY() should be(5)
+
+  }
   // todo Input buffer overflow
 }

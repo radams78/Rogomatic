@@ -25,6 +25,7 @@ private class InputBuffer(interpreter : Interpreter) {
       case InputBuffer.CharSeq.CursorDown(n) => interpreter.cursorDown(n)
       case InputBuffer.CharSeq.CursorForwards(n) => interpreter.cursorForwards(n)
       case InputBuffer.CharSeq.CursorPosition(y, x) => interpreter.cursorPosition(y, x)
+      case InputBuffer.CharSeq.CursorUp(n) => interpreter.cursorUp(n)
       case InputBuffer.CharSeq.NormalChar(c) => interpreter.printChar(c)
     }
 
@@ -53,6 +54,8 @@ object InputBuffer {
 
   private def interpretSequenceAfterCSI(contents : Queue[Char], parameters : Seq[Int], currentParameter : Int) : Option[(CharSeq, Queue[Char])] =
     contents.dequeueOption match {
+      case Some('A', tail) =>
+        Some(CharSeq.CursorUp(currentParameter), tail)
       case Some('B', tail) => 
         Some(CharSeq.CursorDown(currentParameter), tail)
       case Some('C', tail) => 
@@ -79,6 +82,7 @@ object InputBuffer {
     case CursorDown(n : Int)
     case CursorForwards(n : Int)
     case CursorPosition(y : Int, x : Int)
+    case CursorUp(n : Int)
     case NormalChar(c : Char)
   }
 }

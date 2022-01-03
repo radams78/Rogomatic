@@ -5,7 +5,7 @@ class Interpreter(display : VT100Display) {
       display.putChar(c)
       display.setCursorX((display.getCursorX() + 1).min(VT100Display.WIDTH))
     }
-    
+
     def backspace() : Unit = 
         display.setCursorX((display.getCursorX() - 1).max(1))
 
@@ -43,5 +43,11 @@ class Interpreter(display : VT100Display) {
         val column = x.max(1)
         display.setCursorX(column)
         display.setCursorY(line)
+    }
+
+    def cursorUp(n : Int) : Unit = {
+        assert(n >= 0)
+        val distance = n.max(1)
+        display.setCursorY((display.getCursorY() - distance).max(1))
     }
 }
