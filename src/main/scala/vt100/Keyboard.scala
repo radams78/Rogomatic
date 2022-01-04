@@ -40,6 +40,7 @@ class Keyboard(
       case Key.Letter(l) =>
         transmitter.transmit(if capsLock then l.toUpper else l)
       case Key.CapsLock => _capsLock = !_capsLock
+      case Key.Return => transmitter.transmit('\u000d')
       case key          => ()
     }
   }
@@ -75,6 +76,7 @@ class Keyboard(
       case Key.Letter(l) =>
         transmitter.transmit(l.toUpper)
       case Key.CapsLock => _capsLock = !_capsLock
+      case Key.Return => transmitter.transmit('\u000d')
       case key          => ()
     }
   }
