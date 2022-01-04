@@ -47,7 +47,7 @@ class KeyboardTest extends AnyFlatSpec with should.Matchers {
     keyboard should be (Symbol("capsLock"))
   }
 
-  "A keyboard" should "when in line feed mode and RETURN is pressed, transmit a line feed code" in {
+  "A keyboard" should "when in line feed mode and RETURN is pressed, transmit a carriage return code" in {
     object MockClick extends IClick {
       override def click() = ()
     }
@@ -62,5 +62,28 @@ class KeyboardTest extends AnyFlatSpec with should.Matchers {
     val keyboard = Keyboard(MockTransmitter, MockClick)
     keyboard.press(Key.Return)
     MockTransmitter should be (Symbol("receivedChar"))
+  }
+
+  "A keyboard" should "when in new line mode and RETURN is pressed, transmit a carriage return code" in {
+    object MockClick extends IClick {
+      override def click() = ()
+    }
+    object MockTransmitter extends ITransmitter {
+      var receivedChar = 0
+      override def transmit(char: Char): Unit = {
+        receivedChar match {
+          case 0 => 
+            char should be('\u000d')
+          case 1 =>
+            char should be ('\n')
+          case n => fail("More than two characters received: " + char.toInt)
+        }
+        receivedChar += 1
+      }
+    }
+
+    val keyboard = Keyboard(MockTransmitter, MockClick, _newLine = NewLine.NewLine)
+    keyboard.press(Key.Return)
+    MockTransmitter.receivedChar should be (2)
   }
 }

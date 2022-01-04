@@ -5,7 +5,8 @@ import javax.smartcardio.CommandAPDU
 class Keyboard(
     transmitter: ITransmitter,
     click: IClick,
-    private var _capsLock: Boolean = false
+    private var _capsLock: Boolean = false,
+    private var _newLine : NewLine = NewLine.LineFeed
 ) extends IKeyboard {
   override def capsLock: Boolean = _capsLock
 
@@ -40,7 +41,12 @@ class Keyboard(
       case Key.Letter(l) =>
         transmitter.transmit(if capsLock then l.toUpper else l)
       case Key.CapsLock => _capsLock = !_capsLock
-      case Key.Return => transmitter.transmit('\u000d')
+      case Key.Return => _newLine match {
+        case NewLine.LineFeed => transmitter.transmit('\u000d')
+        case NewLine.NewLine =>
+          transmitter.transmit('\u000d')
+          transmitter.transmit('\n')
+      }
       case key          => ()
     }
   }
@@ -76,7 +82,12 @@ class Keyboard(
       case Key.Letter(l) =>
         transmitter.transmit(l.toUpper)
       case Key.CapsLock => _capsLock = !_capsLock
-      case Key.Return => transmitter.transmit('\u000d')
+      case Key.Return => _newLine match {
+        case NewLine.LineFeed => transmitter.transmit('\u000d')
+        case NewLine.NewLine =>
+          transmitter.transmit('\u000d')
+          transmitter.transmit('\n')
+      }
       case key          => ()
     }
   }
@@ -144,4 +155,9 @@ enum Key {
   case NumComma
   case NumEnter
   case NumPeriod
+}
+
+enum NewLine {
+  case LineFeed
+  case NewLine
 }
