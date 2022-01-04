@@ -17,8 +17,8 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-/*  it should "print a character on the screen" in {
-    val terminal = VT100()
+  it should "print a character on the screen" in {
+    val terminal = Terminal()
     terminal.sendChar('a')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq(
       "a" + " " * 79
@@ -27,7 +27,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-  it should "print two characters on the screen" in {
+/*  it should "print two characters on the screen" in {
     val terminal = VT100()
     terminal.sendChar('a')
     terminal.sendChar('b')
