@@ -10,6 +10,6 @@ class Terminal {
   def getCursorY() : Int = cursorY
   def sendChar(char : Char) : Unit = {
     screenContents(cursorY - 1)(cursorX - 1) = char
-    cursorX += 1
+    if (cursorX < 80) then cursorX += 1
   }
 }

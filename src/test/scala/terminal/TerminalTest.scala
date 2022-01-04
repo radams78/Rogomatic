@@ -27,8 +27,8 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-/*  it should "print two characters on the screen" in {
-    val terminal = VT100()
+  it should "print two characters on the screen" in {
+    val terminal = Terminal()
     terminal.sendChar('a')
     terminal.sendChar('b')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq(
@@ -39,7 +39,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
   }
 
   it should "when it reaches the final column, overwrite the last character" in {
-    val terminal = VT100()
+    val terminal = Terminal()
     for i <- 1 to 80 do terminal.sendChar('a')
     terminal.sendChar('b')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq(
@@ -49,7 +49,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-  it should "ignore a NUL character" in {
+/*  it should "ignore a NUL character" in {
     val terminal = VT100()
     terminal.sendChar(VT100.NUL)
     terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(
