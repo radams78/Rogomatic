@@ -1,7 +1,8 @@
 package terminal
 
 class Terminal {
-  private var screenContents : Array[Array[Char]] = Array.fill(24, 80)(' ')
+  private val HEIGHT = 24
+  private var screenContents : Array[Array[Char]] = Array.fill(HEIGHT, 80)(' ')
   private var cursorX = 1
   private var cursorY = 1
 
