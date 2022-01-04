@@ -5,18 +5,21 @@ import javax.smartcardio.CommandAPDU
 class Keyboard(
     transmitter: ITransmitter,
     click: IClick,
-    capsLock: Boolean = false
+    private var _capsLock: Boolean = false
 ) extends IKeyboard {
+  override def capsLock : Boolean = _capsLock
+
   override def press(key : Key): Unit = {
     click.click()
     key match {
         case Key.Letter(l) => transmitter.transmit(if capsLock then l.toUpper else l)
-        case _ => ()
+        case Key.CapsLock => _capsLock = ! _capsLock
+        case key => ()
     }
   }
 
   override def pressWithShift(key : Key) : Unit = {
-      click.click()
+    click.click()
     key match {
         case Key.Letter(l) => transmitter.transmit(l.toUpper)
         case _ => ()
@@ -55,6 +58,7 @@ enum Key {
     case Return
     case Delete
 
+    case CapsLock
     case Semicolon
     case Apostrophe
     case BackslashTwo
