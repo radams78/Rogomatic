@@ -2,7 +2,7 @@ package terminal
 
 class Terminal {
   private var screenContents : Array[Array[Char]] = Array.fill(24, 80)(' ')
-  var cursorX = 1
+  private var cursorX = 1
 
   def getScreen() : Seq[String] = screenContents.map(_.mkString).toSeq
   def getCursorX() : Int = cursorX
