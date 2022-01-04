@@ -59,9 +59,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-/*  it should "ignore a DEL character" in {
-    val terminal = VT100()
-    terminal.sendChar(VT100.DEL)
+  it should "ignore a DEL character" in {
+    val terminal = Terminal()
+    terminal.sendChar('\u007f')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(
       " " * 80
     )
@@ -73,7 +73,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
 
   // TODO BEL character
 
-  it should "when given a BS character, move the cursor left" in {
+/*  it should "when given a BS character, move the cursor left" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.BS)
     terminal.getCursorX() should be(22)

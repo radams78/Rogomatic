@@ -11,11 +11,12 @@ class Terminal {
 
   def sendChar(char : Char) : Unit = char match {
       case Terminal.NUL => ()
+      case '\u007f' => ()
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
         if (cursorX < Terminal.WIDTH) then cursorX += 1
       }
-      case c => throw new Error("Unrecognized character: " + c)
+      case c => throw new Error("Unrecognized character: " + c.toInt)
   }
 }
 
