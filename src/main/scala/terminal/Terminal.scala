@@ -8,7 +8,7 @@ class Terminal {
   def getScreen() : Seq[String] = screenContents.map(_.mkString).toSeq
   def getCursorX() : Int = cursorX
   def getCursorY() : Int = cursorY
-  def sendChar(char : Char) : Unit = {
+  def sendChar(char : Char) : Unit = if (char != '\u0000') then {
     screenContents(cursorY - 1)(cursorX - 1) = char
     if (cursorX < 80) then cursorX += 1
   }

@@ -49,9 +49,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-/*  it should "ignore a NUL character" in {
-    val terminal = VT100()
-    terminal.sendChar(VT100.NUL)
+  it should "ignore a NUL character" in {
+    val terminal = Terminal()
+    terminal.sendChar('\u0000')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(
       " " * 80
     )
@@ -59,7 +59,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-  it should "ignore a DEL character" in {
+/*  it should "ignore a DEL character" in {
     val terminal = VT100()
     terminal.sendChar(VT100.DEL)
     terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(
