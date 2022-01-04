@@ -11,13 +11,13 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     )
   }
 
-/*  it should "have the cursor at position (1,1) when first turned on" in {
-    val terminal = VT100()
+  it should "have the cursor at position (1,1) when first turned on" in {
+    val terminal = Terminal()
     terminal.getCursorX() should be(1)
     terminal.getCursorY() should be(1)
   }
 
-  it should "print a character on the screen" in {
+/*  it should "print a character on the screen" in {
     val terminal = VT100()
     terminal.sendChar('a')
     terminal.getScreen() should contain theSameElementsInOrderAs Seq(
