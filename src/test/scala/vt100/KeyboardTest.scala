@@ -14,7 +14,7 @@ class KeyboardTest extends AnyFlatSpec with should.Matchers {
           override def transmit(char : Char) : Unit = ()
       }
       val keyboard = Keyboard(MockTransmitter, MockClick)
-      keyboard.press('g')
+      keyboard.press(Key.Letter('g'))
       MockClick should be (Symbol("clicked"))
   }
 
@@ -31,7 +31,7 @@ class KeyboardTest extends AnyFlatSpec with should.Matchers {
       }
 
       val keyboard = Keyboard(MockTransmitter, MockClick, capsLock = true)
-      keyboard.press('m')
+      keyboard.press(Key.Letter('m'))
       MockTransmitter should be (Symbol("receivedChar"))
   }
 }

@@ -1,11 +1,88 @@
 package vt100
 
-class Keyboard(transmitter: ITransmitter, click: IClick, capsLock : Boolean = false) extends IKeyboard {
-  override def press(char: Char): Unit = {
+import javax.smartcardio.CommandAPDU
+
+class Keyboard(
+    transmitter: ITransmitter,
+    click: IClick,
+    capsLock: Boolean = false
+) extends IKeyboard {
+  override def press(key : Key): Unit = {
     click.click()
-    char match {
-        case c if c.isLower => transmitter.transmit(if capsLock then c.toUpper else c)
-        case c if c.isUpper => transmitter.transmit(c)
+    key match {
+        case Key.Letter(l) => transmitter.transmit(if capsLock then l.toUpper else l)
+        case _ => ()
     }
   }
+
+  override def pressWithShift(key : Key) : Unit = {
+      click.click()
+    key match {
+        case Key.Letter(l) => transmitter.transmit(l.toUpper)
+        case _ => ()
+    }
+  }
+}
+
+enum Key {
+    case Setup
+    case Up
+    case Down
+    case Left
+    case Right
+
+    case Esc
+    case One
+    case Two
+    case Three
+    case Four
+    case Five
+    case Six
+    case Seven
+    case Eight
+    case Nine
+    case Zero
+    case Minus
+    case Equals
+    case BackslashOne
+    case Backspace
+    case Break
+
+    case Tab
+    case Letter(letter : Char) // TODO Must be lower-case letter
+    case LeftBracket
+    case RightBracket
+    case Return
+    case Delete
+
+    case Semicolon
+    case Apostrophe
+    case BackslashTwo
+    
+    case NoScroll
+    case Comma
+    case Period
+    case Slash
+    case Linefeed
+
+    case Space
+
+    case PF1
+    case PF2
+    case PF3
+    case PF4
+    case Num0
+    case Num1
+    case Num2
+    case Num3
+    case Num4
+    case Num5
+    case Num6
+    case Num7
+    case Num8
+    case Num9
+    case NumMinus
+    case NumComma
+    case NumEnter
+    case NumPeriod
 }

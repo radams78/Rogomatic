@@ -7,7 +7,9 @@ class VT100 private (display : IDisplay, inputBuffer : IInputBuffer, keyboard : 
 
   override def getCursorY() : Int = display.getCursorY()
 
-  override def press(char : Char) : Unit = keyboard.press(char)
+  override def press(key : Key) : Unit = keyboard.press(key)
+
+  override def pressWithShift(key : Key) : Unit = keyboard.pressWithShift(key)
 
   private[vt100] def sendChar(char : Char) : Unit = inputBuffer.add(char)
 }

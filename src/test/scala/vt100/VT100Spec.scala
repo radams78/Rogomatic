@@ -296,7 +296,7 @@ class VT100Scala extends AnyFlatSpec with should.Matchers {
         }
     }
     val terminal = VT100(MockHost)
-    terminal.press('A')
+    terminal.pressWithShift(Key.Letter('a'))
     MockHost should be (Symbol("receivedSignal"))
   }
   // todo Input buffer overflow
