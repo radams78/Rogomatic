@@ -94,76 +94,14 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(15)
   }
 
-/*  it should "when given an LF character at the bottom of the screen, scroll the screen" in {
-    val terminal = VT100(
-      1,
-      24,
-      """a
-        |b
-        |c
-        |d
-        |e
-        |f
-        |g
-        |h
-        |i
-        |j
-        |k
-        |l
-        |m
-        |n
-        |o
-        |p
-        |q
-        |r
-        |s
-        |t
-        |u
-        |v
-        |w
-        |x""".stripMargin
-    )
-    terminal.sendChar(VT100.LF)
-    terminal.getCursorX() should be(1)
-    terminal.getCursorY() should be(24)
-    terminal.getScreen() should contain theSameElementsInOrderAs (
-      """b
-            |c
-            |d
-            |e
-            |f
-            |g
-            |h
-            |i
-            |j
-            |k
-            |l
-            |m
-            |n
-            |o
-            |p
-            |q
-            |r
-            |s
-            |t
-            |u
-            |v
-            |w
-            |x
-            | """.stripMargin
-        .split('\n')
-        .map(_.padTo(80, ' '))
-    )
-  }
-
   it should "when given a VT character, move the cursor down" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.VT)
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u000b')
     terminal.getCursorX() should be(23)
     terminal.getCursorY() should be(15)
   }
 
-  it should "when given an FF character, move the cursor down" in {
+/*  it should "when given an FF character, move the cursor down" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.FF)
     terminal.getCursorX() should be(23)

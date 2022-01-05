@@ -1,5 +1,9 @@
 package terminal
 
+/** This terminal:
+  * * ignores tab characters
+  * * does not scroll - ignores line feeds and cursor down commands when at the bottom of the screen
+  */
 class Terminal(x : Int = 1, y : Int = 1) {
   private var screenContents : Array[Array[Char]] = Array.fill(Terminal.HEIGHT, Terminal.WIDTH)(' ')
   private var cursorX = x
@@ -13,6 +17,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
       case Terminal.NUL => ()
       case Terminal.BS => if cursorX > 1 then cursorX -= 1
       case Terminal.DEL => ()
+      case '\n' | '\u000b' => if cursorY < Terminal.HEIGHT then cursorY += 1
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
         if (cursorX < Terminal.WIDTH) then cursorX += 1
