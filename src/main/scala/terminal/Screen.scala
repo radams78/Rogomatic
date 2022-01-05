@@ -7,4 +7,5 @@ class Screen(initialContents : String) {
     .map(_.padTo(80,' ').toCharArray)
     .toArray
 
+  def getContents() : Seq[String] = screenContents.map(_.mkString).toSeq
 }

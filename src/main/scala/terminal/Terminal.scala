@@ -17,7 +17,7 @@ class Terminal(x: Int = 1,
   private var inputBuffer: Queue[Char] = Queue()
   private var screen : Screen = Screen(initialScreenContents)
 
-  def getScreen(): Seq[String] = screen.screenContents.map(_.mkString).toSeq
+  def getScreen(): Seq[String] = screen.getContents()
   def getCursorX(): Int = cursorX
   def getCursorY(): Int = cursorY
 
