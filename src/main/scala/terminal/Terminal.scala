@@ -1,5 +1,7 @@
 package terminal
 
+import scala.collection.immutable.Queue
+
 /** This terminal:
   * * ignores tab characters
   * * does not scroll - ignores line feeds and cursor down commands when at the bottom of the screen
@@ -11,6 +13,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
   private var screenContents : Array[Array[Char]] = Array.fill(Terminal.HEIGHT, Terminal.WIDTH)(' ')
   private var cursorX = x
   private var cursorY = y
+  private var inputBuffer : Queue[Char] = Queue()
   private var escape = 0
 
   def getScreen() : Seq[String] = screenContents.map(_.mkString).toSeq
@@ -18,22 +21,34 @@ class Terminal(x : Int = 1, y : Int = 1) {
   def getCursorY() : Int = cursorY
 
   def sendChar(char : Char) : Unit = char match {
-      case Terminal.NUL => ()
-      case Terminal.BS => if cursorX > 1 then cursorX -= 1
-      case Terminal.DEL => ()
-      case Terminal.LF | Terminal.VT | Terminal.FF => if cursorY < Terminal.HEIGHT then cursorY += 1
-      case Terminal.CR => cursorX = 1
-      case '\u001b' => escape += 1
-      case '[' if escape == 1 => escape = 2
-      case 'D' if escape == 2 => {
-        escape = 0
-        if cursorX > 1 then cursorX -= 1
-      }
-      case c if ! c.isControl => {
-        screenContents(cursorY - 1)(cursorX - 1) = char
-        if (cursorX < Terminal.WIDTH) then cursorX += 1
-      }
-      case c => throw new Error("Unrecognized character: " + c.toInt)
+      case Terminal.NUL | Terminal.DEL => ()
+      case c =>
+        inputBuffer = inputBuffer :+ c
+        inputBuffer.dequeue match
+          case (Terminal.BS, tail) =>
+            if cursorX > 1 then cursorX -= 1
+            inputBuffer = tail
+          case (Terminal.LF | Terminal.VT | Terminal.FF , tail) => 
+            if cursorY < Terminal.HEIGHT then cursorY += 1
+            inputBuffer = tail
+          case (Terminal.CR, tail) => 
+            cursorX = 1
+            inputBuffer = tail
+          case ('\u001b', tail) => tail.dequeueOption match
+            case Some('[', tail) => tail.dequeueOption match
+              case Some('D', tail) =>
+                if cursorX > 1 then cursorX -= 1
+                inputBuffer = tail
+              case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + [ + " + c)
+              case None => ()
+            case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + c)
+            case None => ()
+          case (c, tail) if ! c.isControl => {
+            screenContents(cursorY - 1)(cursorX - 1) = char
+            if (cursorX < Terminal.WIDTH) then cursorX += 1
+            inputBuffer = tail
+          }
+          case (c, tail) => throw new Error("Unrecognized character " + c)
   }
 }
 
