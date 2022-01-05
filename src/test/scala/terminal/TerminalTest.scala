@@ -116,16 +116,16 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
   }
 
   // TODO CAN and SUB codes
-/*  it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+  it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar('D')
     terminal.getCursorX() should be(22)
     terminal.getCursorY() should be(14)
   }
 
-  it should "when given a CUB sequence, move the cursor multiple spaces left" in {
+/*  it should "when given a CUB sequence, move the cursor multiple spaces left" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.ESC)
     terminal.sendChar('[')
