@@ -12,12 +12,6 @@ import scala.annotation.meta.param
 class Terminal(x: Int = 1, 
                y: Int = 1,
                initialScreenContents : String = "") {
-  private var screenContents: Array[Array[Char]] =
-    initialScreenContents
-    .split('\n')
-    .padTo(24, "")
-    .map(_.padTo(80,' ').toCharArray)
-    .toArray
   private var cursorX = x
   private var cursorY = y
   private var inputBuffer: Queue[Char] = Queue()
