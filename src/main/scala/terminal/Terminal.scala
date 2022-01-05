@@ -64,7 +64,7 @@ class Terminal(x: Int = 1,
       currentParameter: Int
   ): Unit = tail.dequeueOption match
     case Some('A', tail) =>
-      cursorY = (cursorY - currentParameter.max(1)).max(1)
+      moveUp(currentParameter.max(1))
       inputBuffer = tail
     case Some('B', tail) =>
       cursorY = (cursorY + currentParameter.max(1)).min(Terminal.HEIGHT)
