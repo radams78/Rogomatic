@@ -16,4 +16,11 @@ class Screen(initialContents : String) {
       assert(y <= Terminal.HEIGHT)
       screenContents(y - 1)(x - 1) = char
     }
+
+  def eraseLine(y : Int) : Unit = {
+    if 1 <= y && y <= Terminal.HEIGHT
+    then 
+      for x <- 1 to Terminal.WIDTH do printChar(x, y, ' ')
+    else println(s"Illegal y-position: $y")
+  }
 }

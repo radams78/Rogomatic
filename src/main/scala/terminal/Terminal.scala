@@ -89,14 +89,14 @@ class Terminal(x: Int = 1,
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
           for x <- cursorX to Terminal.WIDTH do screen.printChar(x, cursorY, ' ')
-          for y <- cursorY + 1 to Terminal.HEIGHT do eraseLine(y)
+          for y <- cursorY + 1 to Terminal.HEIGHT do screen.eraseLine(y)
         }
         case 1 => {
-          for y <- 1 until cursorY do eraseLine(y)
+          for y <- 1 until cursorY do screen.eraseLine(y)
           for x <- 1 to cursorX do screen.printChar(x, cursorY, ' ')
         }
         case 2 => {
-          for y <- 1 to Terminal.HEIGHT do eraseLine(y)
+          for y <- 1 to Terminal.HEIGHT do screen.eraseLine(y)
         }
         case n => {
           // DEBUG
@@ -153,14 +153,6 @@ class Terminal(x: Int = 1,
         // DEBUG
         println(s"Illegal position: $x,$y")
       }
-    }
-
-    private def eraseLine(y : Int) : Unit = {
-      if 1 <= y && y <= Terminal.HEIGHT
-      then 
-        for x <- 1 to Terminal.WIDTH do screen.printChar(x, y, ' ')
-      else println(s"Illegal y-position: $y")
-
     }
 }
 
