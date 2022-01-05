@@ -19,7 +19,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
       case Terminal.NUL => ()
       case Terminal.BS => if cursorX > 1 then cursorX -= 1
       case Terminal.DEL => ()
-      case '\n' | Terminal.HT | '\u000c' => if cursorY < Terminal.HEIGHT then cursorY += 1
+      case '\n' | Terminal.VT | Terminal.FF => if cursorY < Terminal.HEIGHT then cursorY += 1
       case '\u000d' => cursorX = 1
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
@@ -35,5 +35,6 @@ object Terminal {
   private val NUL = '\u0000'
   private val BS = '\u0008'
   private val DEL = '\u007f'
-  private val HT = '\u000b'
+  private val VT = '\u000b'
+  private val FF = '\u000c'
 }
