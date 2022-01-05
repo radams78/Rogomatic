@@ -37,7 +37,7 @@ class Terminal(x: Int = 1,
           inputBuffer = tail
         case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
         case (c, tail) if !c.isControl => {
-          printChar(cursorX, cursorY, c)
+          screen.printChar(cursorX, cursorY, c)
           if (cursorX < Terminal.WIDTH) then cursorX += 1
           inputBuffer = tail
         }
@@ -88,12 +88,12 @@ class Terminal(x: Int = 1,
     case Some('J', tail) => {
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
-          for x <- cursorX to Terminal.WIDTH do printChar(x, cursorY, ' ')
+          for x <- cursorX to Terminal.WIDTH do screen.printChar(x, cursorY, ' ')
           for y <- cursorY + 1 to Terminal.HEIGHT do eraseLine(y)
         }
         case 1 => {
           for y <- 1 until cursorY do eraseLine(y)
-          for x <- 1 to cursorX do printChar(x, cursorY, ' ')
+          for x <- 1 to cursorX do screen.printChar(x, cursorY, ' ')
         }
         case 2 => {
           for y <- 1 to Terminal.HEIGHT do eraseLine(y)
@@ -107,7 +107,7 @@ class Terminal(x: Int = 1,
       inputBuffer = tail
     }
     case Some('K', tail) =>
-      for x <- cursorX to Terminal.WIDTH do printChar(x, cursorY, ' ')
+      for x <- cursorX to Terminal.WIDTH do screen.printChar(x, cursorY, ' ')
       inputBuffer = tail
     case Some(';', tail) =>
       parseSequenceAfterCSI(
@@ -125,14 +125,6 @@ class Terminal(x: Int = 1,
       )
     case Some(c, tail) => println(s"Unrecognized escape sequence: ESC + ${sequence.mkString}$c")
     case None => ()
-
-    private def printChar(x : Int, y : Int, char : Char) : Unit = {
-      assert(1 <= x)
-      assert(x <= Terminal.WIDTH)
-      assert(1 <= y)
-      assert(y <= Terminal.HEIGHT)
-      screen.screenContents(y - 1)(x - 1) = char
-    }
 
     private def moveUp(n : Int = 1) : Unit = {
       cursorY = (cursorY - n).max(1)
@@ -166,7 +158,7 @@ class Terminal(x: Int = 1,
     private def eraseLine(y : Int) : Unit = {
       if 1 <= y && y <= Terminal.HEIGHT
       then 
-        for x <- 1 to Terminal.WIDTH do printChar(x, y, ' ')
+        for x <- 1 to Terminal.WIDTH do screen.printChar(x, y, ' ')
       else println(s"Illegal y-position: $y")
 
     }
