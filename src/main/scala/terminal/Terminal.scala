@@ -3,6 +3,8 @@ package terminal
 /** This terminal:
   * * ignores tab characters
   * * does not scroll - ignores line feeds and cursor down commands when at the bottom of the screen
+  * * ignores SO and SI codes
+  * * ignores XON and XOFF codes, and does not transmit them
   */
 class Terminal(x : Int = 1, y : Int = 1) {
   private var screenContents : Array[Array[Char]] = Array.fill(Terminal.HEIGHT, Terminal.WIDTH)(' ')
@@ -17,7 +19,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
       case Terminal.NUL => ()
       case Terminal.BS => if cursorX > 1 then cursorX -= 1
       case Terminal.DEL => ()
-      case '\n' | '\u000b' | '\u000c' => if cursorY < Terminal.HEIGHT then cursorY += 1
+      case '\n' | Terminal.HT | '\u000c' => if cursorY < Terminal.HEIGHT then cursorY += 1
       case '\u000d' => cursorX = 1
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
@@ -33,4 +35,5 @@ object Terminal {
   private val NUL = '\u0000'
   private val BS = '\u0008'
   private val DEL = '\u007f'
+  private val HT = '\u000b'
 }
