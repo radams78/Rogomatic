@@ -183,9 +183,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(1)
   }
 
-/*  it should "when given a CUP sequence, move the cursor to the specified position" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+  it should "when given a CUP sequence, move the cursor to the specified position" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar('7')
     terminal.sendChar(';')
@@ -196,7 +196,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(7)
   }
 
-  it should "ignore a CUP sequence with invalid parameters" in {
+/*  it should "ignore a CUP sequence with invalid parameters" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.ESC)
     terminal.sendChar('[')
