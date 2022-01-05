@@ -70,7 +70,7 @@ class Terminal(x: Int = 1,
       moveDown(currentParameter.max(1))
       inputBuffer = tail
     case Some('C', tail) =>
-      cursorX = (cursorX + currentParameter.max(1)).min(Terminal.WIDTH)
+      moveRight(currentParameter.max(1))
       inputBuffer = tail
     case Some('D', tail) =>
       cursorX = (cursorX - currentParameter.max(1)).max(1)
@@ -149,6 +149,10 @@ class Terminal(x: Int = 1,
 
     private def moveDown(n : Int = 1) : Unit = {
       cursorY = (cursorY + n).min(Terminal.HEIGHT)
+    }
+
+    private def moveRight(n : Int = 1) : Unit = {
+      cursorX = (cursorX + n).min(Terminal.WIDTH)
     }
 }
 
