@@ -34,15 +34,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
           case (Terminal.CR, tail) => 
             cursorX = 1
             inputBuffer = tail
-          case ('\u001b', tail) => tail.dequeueOption match
-            case Some('[', tail) => tail.dequeueOption match
-              case Some('D', tail) =>
-                if cursorX > 1 then cursorX -= 1
-                inputBuffer = tail
-              case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + [ + " + c)
-              case None => ()
-            case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + c)
-            case None => ()
+          case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
           case (c, tail) if ! c.isControl => {
             screenContents(cursorY - 1)(cursorX - 1) = char
             if (cursorX < Terminal.WIDTH) then cursorX += 1
@@ -50,6 +42,16 @@ class Terminal(x : Int = 1, y : Int = 1) {
           }
           case (c, tail) => throw new Error("Unrecognized character " + c)
   }
+
+  private def parseSequenceAfterEscape(tail : Queue[Char]) : Unit = tail.dequeueOption match
+    case Some('[', tail) => tail.dequeueOption match
+      case Some('D', tail) =>
+        if cursorX > 1 then cursorX -= 1
+        inputBuffer = tail
+      case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + [ + " + c)
+      case None => ()
+    case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + c)
+    case None => ()
 }
 
 object Terminal {
@@ -62,4 +64,5 @@ object Terminal {
   private val VT = '\u000b'
   private val FF = '\u000c'
   private val CR = '\u000d'
+  private val ESC = '\u001b'
 }
