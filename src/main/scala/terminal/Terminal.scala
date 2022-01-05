@@ -173,8 +173,8 @@ class Terminal(x: Int = 1,
 }
 
 object Terminal {
-  private val HEIGHT = 24
-  private val WIDTH = 80
+  val HEIGHT = 24
+  val WIDTH = 80
   private val NUL = '\u0000'
   private val BS = '\u0008'
   private val DEL = '\u007f'
