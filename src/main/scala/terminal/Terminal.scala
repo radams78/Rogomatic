@@ -73,24 +73,21 @@ class Terminal(x: Int = 1,
       moveRight(currentParameter.max(1))
       inputBuffer = tail
     case Some('D', tail) =>
-      cursorX = (cursorX - currentParameter.max(1)).max(1)
+      moveLeft(currentParameter.max(1))
       inputBuffer = tail
     case Some('H', tail) => {
       parameters.length match {
         case 0 =>
-          if currentParameter == 0 then {
-            cursorX = 1
-            cursorY = 1
-          }
+          if currentParameter == 0 then moveTo(1, 1)
         case 1 => {
           val x = currentParameter.max(1)
           val y = parameters(0).max(1)
-          if (1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT) then {
-            cursorX = x
-            cursorY = y
-          }
+          moveTo(x, y)
         }
-        case n => ()
+        case n => {
+          // DEBUG
+          println(s"Illegal command sequence: ESC ${sequence.mkString}H")
+        }
       }
       inputBuffer = tail
     }
@@ -98,18 +95,10 @@ class Terminal(x: Int = 1,
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
           for x <- cursorX to Terminal.WIDTH do printChar(x, cursorY, ' ')
-          for 
-            y <- cursorY + 1 to Terminal.HEIGHT 
-            x <- 1 to Terminal.WIDTH
-          do
-            printChar(x, y, ' ')
+          for y <- cursorY + 1 to Terminal.HEIGHT do eraseLine(y)
         }
         case 1 => {
-          for
-            y <- 1 until cursorY
-            x <- 1 to Terminal.WIDTH
-          do
-            printChar(x, y, ' ')
+          for y <- 1 until cursorY do eraseLine(y)
           for x <- 1 to cursorX do printChar(x, cursorY, ' ')
         }
       }
@@ -153,6 +142,31 @@ class Terminal(x: Int = 1,
 
     private def moveRight(n : Int = 1) : Unit = {
       cursorX = (cursorX + n).min(Terminal.WIDTH)
+    }
+
+    private def moveLeft(n : Int = 1) : Unit = {
+      cursorX = (cursorX - n).max(1)
+    }
+
+    // Ignores invalid positions
+    private def moveTo(x : Int, y : Int) : Unit = {
+      if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT
+      then {
+        cursorX = x
+        cursorY = y
+      }
+      else {
+        // DEBUG
+        println(s"Illegal position: $x,$y")
+      }
+    }
+
+    private def eraseLine(y : Int) : Unit = {
+      if 1 <= y && y <= Terminal.HEIGHT
+      then 
+        for x <- 1 to Terminal.WIDTH do printChar(x, y, ' ')
+      else println(s"Illegal y-position: $y")
+
     }
 }
 
