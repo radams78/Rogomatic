@@ -6,11 +6,18 @@ import scala.annotation.meta.param
 /** This terminal: * ignores tab characters * does not scroll - ignores line
   * feeds and cursor down commands when at the bottom of the screen * ignores SO
   * and SI codes * ignores XON and XOFF codes, and does not transmit them *
-  * ignores CPR sequences
+  * Ignores these sequences: CPR, DA, DECALN, DECDHL, DECDWL, DECID, DECKPAM,
+  * DECLL, DECRC, DECREPTPARM, DECREQTPARM, DECSC, DECSTBM, DECSWL, DECTST, DSR
   */
-class Terminal(x: Int = 1, y: Int = 1) {
+class Terminal(x: Int = 1, 
+               y: Int = 1,
+               initialScreenContents : String = "") {
   private var screenContents: Array[Array[Char]] =
-    Array.fill(Terminal.HEIGHT, Terminal.WIDTH)(' ')
+    initialScreenContents
+    .split('\n')
+    .padTo(24, "")
+    .map(_.padTo(80,' ').toCharArray)
+    .toArray
   private var cursorX = x
   private var cursorY = y
   private var inputBuffer: Queue[Char] = Queue()
@@ -84,6 +91,17 @@ class Terminal(x: Int = 1, y: Int = 1) {
           }
         }
         case n => ()
+      }
+      inputBuffer = tail
+    }
+    case Some('J', tail) => {
+      if (parameters.isEmpty) then {
+        for x <- cursorX to Terminal.WIDTH do screenContents(cursorY - 1)(x - 1) = ' '
+        for 
+          y <- cursorY + 1 to Terminal.HEIGHT 
+          x <- 1 to Terminal.WIDTH
+        do
+          screenContents(y - 1)(x - 1) = ' '
       }
       inputBuffer = tail
     }

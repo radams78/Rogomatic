@@ -220,26 +220,17 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(5)
   }
 
-/*  it should "when a letter key is pressed, transmit the appropriate code to the host" in {
-    object MockHost extends IHost {
-        var receivedSignal = false
-
-        override def sendChar(char : Char) : Unit = {
-            char should be ('A')
-            receivedSignal = true
-        }
-    }
-    val terminal = VT100(MockHost)
-    terminal.pressWithShift(Key.Letter('a'))
-    MockHost should be (Symbol("receivedSignal"))
+  it should "when given an ED sequence with no parameter, erase to the end of the screen" in {
+    val terminal : Terminal = Terminal(10, 10,
+      (("abcdefghijklmnopqrstuvwxyz".padTo(80,' ')) + '\n') * 24
+    )
+    terminal.sendChar('\u001b')
+    terminal.sendChar('[')
+    terminal.sendChar('J')
+    terminal.getScreen() should contain theSameElementsInOrderAs (
+      (Seq.fill(9)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
+      :+ "abcdefghi".padTo(80,' '))
+      ++ Seq.fill(14)(" " * 80)
+    )
   }
-  // todo Input buffer overflow
-
-  // todo DECALN
-  // todo DECDHL
-  // todo DECDWL
-  // todo DECID
-  // todo DECKPAM
-  // todo DECKPNM
-  // todo DECLL ETC */
 }
