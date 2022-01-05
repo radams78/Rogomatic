@@ -23,7 +23,13 @@ class Terminal(x: Int = 1,
   private var inputBuffer: Queue[Char] = Queue()
   private var screen : Screen = Screen()
 
-  def getScreen(): Seq[String] = screenContents.map(_.mkString).toSeq
+  screen.screenContents = initialScreenContents
+    .split('\n')
+    .padTo(24, "")
+    .map(_.padTo(80,' ').toCharArray)
+    .toArray
+
+  def getScreen(): Seq[String] = screen.screenContents.map(_.mkString).toSeq
   def getCursorX(): Int = cursorX
   def getCursorY(): Int = cursorY
 
@@ -137,7 +143,7 @@ class Terminal(x: Int = 1,
       assert(x <= Terminal.WIDTH)
       assert(1 <= y)
       assert(y <= Terminal.HEIGHT)
-      screenContents(y - 1)(x - 1) = char
+      screen.screenContents(y - 1)(x - 1) = char
     }
 
     private def moveUp(n : Int = 1) : Unit = {
