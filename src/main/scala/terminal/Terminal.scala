@@ -112,6 +112,9 @@ class Terminal(x: Int = 1,
       else println(s"Illegal control sequence: ESC ${sequence.mkString}J")
       inputBuffer = tail
     }
+    case Some('K', tail) =>
+      for x <- cursorX to Terminal.WIDTH do printChar(x, cursorY, ' ')
+      inputBuffer = tail
     case Some(';', tail) =>
       parseSequenceAfterCSI(
         tail,
