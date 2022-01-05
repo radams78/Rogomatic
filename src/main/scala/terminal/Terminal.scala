@@ -67,7 +67,7 @@ class Terminal(x: Int = 1,
       moveUp(currentParameter.max(1))
       inputBuffer = tail
     case Some('B', tail) =>
-      cursorY = (cursorY + currentParameter.max(1)).min(Terminal.HEIGHT)
+      moveDown(currentParameter.max(1))
       inputBuffer = tail
     case Some('C', tail) =>
       cursorX = (cursorX + currentParameter.max(1)).min(Terminal.WIDTH)
