@@ -11,7 +11,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
 
   def sendChar(char : Char) : Unit = char match {
       case Terminal.NUL => ()
-      case '\u0008' => if cursorX > 1 then cursorX -= 1
+      case Terminal.BS => if cursorX > 1 then cursorX -= 1
       case '\u007f' => ()
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
@@ -25,4 +25,5 @@ object Terminal {
   private val HEIGHT = 24
   private val WIDTH = 80
   private val NUL = '\u0000'
+  private val BS = '\u0008'
 }
