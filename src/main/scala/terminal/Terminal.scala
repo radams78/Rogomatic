@@ -142,6 +142,10 @@ class Terminal(x: Int = 1,
       assert(y <= Terminal.HEIGHT)
       screenContents(y - 1)(x - 1) = char
     }
+
+    private def moveUp(n : Int = 1) : Unit = {
+      cursorY = (cursorY - n).max(1)
+    }
 }
 
 object Terminal {
