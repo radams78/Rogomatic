@@ -101,7 +101,12 @@ class Terminal(x: Int = 1,
           for y <- 1 until cursorY do eraseLine(y)
           for x <- 1 to cursorX do printChar(x, cursorY, ' ')
         }
+        case 2 => {
+          // DEBUG
+          println(s"Illegal control sequence: ESC ${sequence.mkString}J")
+        }
       }
+      else println(s"Illegal control sequence: ESC ${sequence.mkString}J")
       inputBuffer = tail
     }
     case Some(';', tail) =>
@@ -118,10 +123,7 @@ class Terminal(x: Int = 1,
         parameters,
         10 * currentParameter + n.asDigit
       )
-    case Some(c, tail) =>
-      throw new Error(
-        "Unrecognized escape sequence: ESC + " + sequence.mkString + c
-      )
+    case Some(c, tail) => println(s"Unrecognized escape sequence: ESC + ${sequence.mkString}$c")
     case None => ()
 
     private def printChar(x : Int, y : Int, char : Char) : Unit = {
