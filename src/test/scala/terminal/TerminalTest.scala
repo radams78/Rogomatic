@@ -101,14 +101,14 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(15)
   }
 
-/*  it should "when given an FF character, move the cursor down" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.FF)
+  it should "when given an FF character, move the cursor down" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u000c')
     terminal.getCursorX() should be(23)
     terminal.getCursorY() should be(15)
   }
 
-  it should "when given a CR character, move to the left margin" in {
+/*  it should "when given a CR character, move to the left margin" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.CR)
     terminal.getCursorX() should be(1)
