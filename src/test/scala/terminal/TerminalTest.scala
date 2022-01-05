@@ -108,9 +108,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(15)
   }
 
-/*  it should "when given a CR character, move to the left margin" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.CR)
+  it should "when given a CR character, move to the left margin" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u000d')
     terminal.getCursorX() should be(1)
     terminal.getCursorY() should be(14)
   }
@@ -118,7 +118,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
   // todo SO and SI chars etc.
   // todo CPR sequence
 
-  it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
+/*  it should "when given a CUB sequence with no parameter, move the cursor one space left" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.ESC)
     terminal.sendChar('[')

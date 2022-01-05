@@ -18,6 +18,7 @@ class Terminal(x : Int = 1, y : Int = 1) {
       case Terminal.BS => if cursorX > 1 then cursorX -= 1
       case Terminal.DEL => ()
       case '\n' | '\u000b' | '\u000c' => if cursorY < Terminal.HEIGHT then cursorY += 1
+      case '\u000d' => cursorX = 1
       case c if ! c.isControl => {
         screenContents(cursorY - 1)(cursorX - 1) = char
         if (cursorX < Terminal.WIDTH) then cursorX += 1
