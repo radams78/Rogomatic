@@ -27,7 +27,7 @@ class Terminal(x: Int = 1,
   def getCursorX(): Int = cursorX
   def getCursorY(): Int = cursorY
 
-  def sendChar(char: Char): Unit = char match {
+  def receiveChar(char: Char): Unit = char match {
     case Terminal.NUL | Terminal.DEL => ()
     case c =>
       inputBuffer = inputBuffer :+ c
@@ -43,7 +43,7 @@ class Terminal(x: Int = 1,
           inputBuffer = tail
         case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
         case (c, tail) if !c.isControl => {
-          screenContents(cursorY - 1)(cursorX - 1) = char
+          printChar(cursorX, cursorY, c)
           if (cursorX < Terminal.WIDTH) then cursorX += 1
           inputBuffer = tail
         }
@@ -97,20 +97,20 @@ class Terminal(x: Int = 1,
     case Some('J', tail) => {
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
-          for x <- cursorX to Terminal.WIDTH do screenContents(cursorY - 1)(x - 1) = ' '
+          for x <- cursorX to Terminal.WIDTH do printChar(x, cursorY, ' ')
           for 
             y <- cursorY + 1 to Terminal.HEIGHT 
             x <- 1 to Terminal.WIDTH
           do
-            screenContents(y - 1)(x - 1) = ' '
+            printChar(x, y, ' ')
         }
         case 1 => {
           for
             y <- 1 until cursorY
             x <- 1 to Terminal.WIDTH
           do
-            screenContents(y - 1)(x - 1) = ' '
-          for x <- 1 to cursorX do screenContents(cursorY - 1)(x - 1) = ' '
+            printChar(x, y, ' ')
+          for x <- 1 to cursorX do printChar(x, cursorY, ' ')
         }
       }
       inputBuffer = tail
@@ -134,6 +134,14 @@ class Terminal(x: Int = 1,
         "Unrecognized escape sequence: ESC + " + sequence.mkString + c
       )
     case None => ()
+
+    private def printChar(x : Int, y : Int, char : Char) : Unit = {
+      assert(1 <= x)
+      assert(x <= Terminal.WIDTH)
+      assert(1 <= y)
+      assert(y <= Terminal.HEIGHT)
+      screenContents(y - 1)(x - 1) = char
+    }
 }
 
 object Terminal {
