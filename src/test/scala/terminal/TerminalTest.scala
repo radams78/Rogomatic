@@ -146,16 +146,16 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(14)
   }
 
-/*  it should "when given a CUD sequence with default parameter, move the cursor one line down" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+  it should "when given a CUD sequence with default parameter, move the cursor one line down" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar('B')
     terminal.getCursorX() should be(23)
     terminal.getCursorY() should be(15)
   }
 
-  it should "when given a CUD sequence when at the bottom of the screen, do nothing" in {
+/*  it should "when given a CUD sequence when at the bottom of the screen, do nothing" in {
     val terminal = VT100(23, 24)
     terminal.sendChar(VT100.ESC)
     terminal.sendChar('[')

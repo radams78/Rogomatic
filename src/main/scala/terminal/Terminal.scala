@@ -49,11 +49,14 @@ class Terminal(x : Int = 1, y : Int = 1) {
     case None => ()
 
   private def parseSequenceAfterCSI(tail : Queue[Char], sequence : Seq[Char], parameter : Int) : Unit =  tail.dequeueOption match
+    case Some('B', tail) =>
+      cursorY = (cursorY + parameter.max(1)).min(Terminal.HEIGHT)
+      inputBuffer = tail
     case Some('D', tail) =>
       cursorX = (cursorX - parameter.max(1)).max(1)
       inputBuffer = tail
     case Some(n, tail) if n.isDigit => parseSequenceAfterCSI(tail, sequence :+ n, 10 * parameter + n.asDigit)
-    case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + sequence)
+    case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + sequence.mkString + c)
     case None => ()
 }
 
