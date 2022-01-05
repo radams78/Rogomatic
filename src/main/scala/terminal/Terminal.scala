@@ -146,6 +146,10 @@ class Terminal(x: Int = 1,
     private def moveUp(n : Int = 1) : Unit = {
       cursorY = (cursorY - n).max(1)
     }
+
+    private def moveDown(n : Int = 1) : Unit = {
+      cursorY = (cursorY + n).min(Terminal.HEIGHT)
+    }
 }
 
 object Terminal {
