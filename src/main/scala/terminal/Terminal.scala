@@ -52,6 +52,11 @@ class Terminal(x : Int = 1, y : Int = 1) {
     case Some('D', tail) =>
       if cursorX > 1 then cursorX -= 1
       inputBuffer = tail
+    case Some('3', tail) => tail.dequeueOption match
+      case Some('D', tail) =>
+        cursorX = (cursorX - 3).max(1)
+        inputBuffer = tail
+      case None => ()
     case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + [ + " + c)
     case None => ()
 }
