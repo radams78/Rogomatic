@@ -164,9 +164,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(24)
   }
 
-/*  it should "when given a CUF sequence, move the cursor right" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+  it should "when given a CUF sequence, move the cursor right" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar { '7' }
     terminal.sendChar('C')
@@ -174,7 +174,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(14)
   }
 
-  it should "when given a CUP sequence with default parameter, move the cursor home" in {
+/*  it should "when given a CUP sequence with default parameter, move the cursor home" in {
     val terminal = VT100(23, 14)
     terminal.sendChar(VT100.ESC)
     terminal.sendChar('[')
