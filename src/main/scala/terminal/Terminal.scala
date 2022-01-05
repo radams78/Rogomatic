@@ -44,20 +44,16 @@ class Terminal(x : Int = 1, y : Int = 1) {
   }
 
   private def parseSequenceAfterEscape(tail : Queue[Char]) : Unit = tail.dequeueOption match
-    case Some('[', tail) => parseSequenceAfterCSI(tail)
+    case Some('[', tail) => parseSequenceAfterCSI(tail, Seq('['), 0)
     case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + c)
     case None => ()
 
-  private def parseSequenceAfterCSI(tail : Queue[Char]) : Unit =  tail.dequeueOption match
+  private def parseSequenceAfterCSI(tail : Queue[Char], sequence : Seq[Char], parameter : Int) : Unit =  tail.dequeueOption match
     case Some('D', tail) =>
-      if cursorX > 1 then cursorX -= 1
+      cursorX = (cursorX - parameter.max(1)).max(1)
       inputBuffer = tail
-    case Some('3', tail) => tail.dequeueOption match
-      case Some('D', tail) =>
-        cursorX = (cursorX - 3).max(1)
-        inputBuffer = tail
-      case None => ()
-    case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + [ + " + c)
+    case Some(n, tail) if n.isDigit => parseSequenceAfterCSI(tail, sequence :+ n, 10 * parameter + n.asDigit)
+    case Some(c, tail) => throw new Error("Unrecognized escape sequence: ESC + " + sequence)
     case None => ()
 }
 
