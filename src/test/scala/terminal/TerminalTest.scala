@@ -248,4 +248,15 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
       ++ Seq.fill(14)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
     )
   }
+
+  it should "when given an ED sequence with parameter 2, clear the screen" in {
+    val terminal : Terminal = Terminal(10, 10,
+      (("abcdefghijklmnopqrstuvwxyz".padTo(80,' ')) + '\n') * 24
+    )
+    terminal.receiveChar('\u001b')
+    terminal.receiveChar('[')
+    terminal.receiveChar('2')
+    terminal.receiveChar('J')
+    terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(" " * 80)
+  }
 }

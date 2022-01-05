@@ -102,6 +102,9 @@ class Terminal(x: Int = 1,
           for x <- 1 to cursorX do printChar(x, cursorY, ' ')
         }
         case 2 => {
+          for y <- 1 to Terminal.HEIGHT do eraseLine(y)
+        }
+        case n => {
           // DEBUG
           println(s"Illegal control sequence: ESC ${sequence.mkString}J")
         }
