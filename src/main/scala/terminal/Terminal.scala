@@ -95,13 +95,23 @@ class Terminal(x: Int = 1,
       inputBuffer = tail
     }
     case Some('J', tail) => {
-      if (parameters.isEmpty) then {
-        for x <- cursorX to Terminal.WIDTH do screenContents(cursorY - 1)(x - 1) = ' '
-        for 
-          y <- cursorY + 1 to Terminal.HEIGHT 
-          x <- 1 to Terminal.WIDTH
-        do
-          screenContents(y - 1)(x - 1) = ' '
+      if (parameters.isEmpty) then currentParameter match {
+        case 0 => {
+          for x <- cursorX to Terminal.WIDTH do screenContents(cursorY - 1)(x - 1) = ' '
+          for 
+            y <- cursorY + 1 to Terminal.HEIGHT 
+            x <- 1 to Terminal.WIDTH
+          do
+            screenContents(y - 1)(x - 1) = ' '
+        }
+        case 1 => {
+          for
+            y <- 1 until cursorY
+            x <- 1 to Terminal.WIDTH
+          do
+            screenContents(y - 1)(x - 1) = ' '
+          for x <- 1 to cursorX do screenContents(cursorY - 1)(x - 1) = ' '
+        }
       }
       inputBuffer = tail
     }
