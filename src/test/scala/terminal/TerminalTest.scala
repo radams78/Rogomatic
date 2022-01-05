@@ -196,9 +196,9 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(7)
   }
 
-/*  it should "ignore a CUP sequence with invalid parameters" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+  it should "ignore a CUP sequence with invalid parameters" in {
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar('9')
     terminal.sendChar('9')
@@ -211,8 +211,8 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
   }
 
   it should "interpret a CUU sequence" in {
-    val terminal = VT100(23, 14)
-    terminal.sendChar(VT100.ESC)
+    val terminal = Terminal(23, 14)
+    terminal.sendChar('\u001b')
     terminal.sendChar('[')
     terminal.sendChar('9')
     terminal.sendChar('A')
@@ -220,7 +220,7 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.getCursorY() should be(5)
   }
 
-  it should "when a letter key is pressed, transmit the appropriate code to the host" in {
+/*  it should "when a letter key is pressed, transmit the appropriate code to the host" in {
     object MockHost extends IHost {
         var receivedSignal = false
 
