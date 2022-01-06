@@ -1,7 +1,6 @@
 package terminal
 
 import scala.collection.immutable.Queue
-import scala.annotation.meta.param
 
 /** This terminal: * ignores tab characters * does not scroll - ignores line
   * feeds and cursor down commands when at the bottom of the screen * ignores SO
@@ -12,7 +11,7 @@ import scala.annotation.meta.param
 class Terminal(x: Int = 1, 
                y: Int = 1,
                initialScreenContents : String = "") {
-  private var cursor = Position(x, y)
+  private var cursor : Position = Position(x, y)
   private var inputBuffer: Queue[Char] = Queue()
   private var screen : Screen = Screen(initialScreenContents)
 
