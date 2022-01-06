@@ -29,6 +29,9 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Terminal.Action.Backspace => cursor = cursor.left()
     case Terminal.Action.Linefeed => cursor = cursor.down()
     case Terminal.Action.CarriageReturn => cursor = Position(1, cursor.y)
+    case Terminal.Action.PrintCharacter(c) =>
+      screen.printChar(cursor.x, cursor.y, c)
+      cursor = cursor.right()      
   }
 
   private def processInputBuffer(): Unit = {
@@ -44,8 +47,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         inputBuffer = tail
       case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
       case (c, tail) if !c.isControl => {
-        screen.printChar(cursor.x, cursor.y, c)
-        cursor = cursor.right()
+        performAction(Terminal.Action.PrintCharacter(c))
         inputBuffer = tail
       }
       case (c, tail) => throw new Error("Unrecognized character " + c)
@@ -179,5 +181,6 @@ object Terminal {
     case Backspace
     case Linefeed
     case CarriageReturn
+    case PrintCharacter(c : Char)
   }
 }
