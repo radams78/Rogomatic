@@ -24,10 +24,14 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       processInputBuffer()
   }
 
+  private def performAction(action : Terminal.Action) = action match {
+    case Terminal.Action.Backspace => cursor = cursor.left()
+  }
+
   private def processInputBuffer(): Unit = {
     inputBuffer.dequeue match
       case (Terminal.BS, tail) =>
-        cursor = cursor.left()
+        performAction(Terminal.Action.Backspace)
         inputBuffer = tail
       case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
         cursor = cursor.down()
@@ -167,4 +171,8 @@ object Terminal {
   private val FF = '\u000c'
   private val CR = '\u000d'
   private val ESC = '\u001b'
+
+  enum Action {
+    case Backspace
+  }
 }
