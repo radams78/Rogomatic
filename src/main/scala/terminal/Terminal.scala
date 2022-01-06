@@ -35,6 +35,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Terminal.Action.CursorUp(n) => moveUp(n)
     case Terminal.Action.CursorDown(n) => moveDown(n)
     case Terminal.Action.CursorRight(n) => moveRight(n)
+    case Terminal.Action.CursorLeft(n) => moveLeft(n)
   }
 
   private def processInputBuffer(): Unit = {
@@ -79,7 +80,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       performAction(Terminal.Action.CursorRight(currentParameter.max(1)))
       inputBuffer = tail
     case Some('D', tail) =>
-      moveLeft(currentParameter.max(1))
+      performAction(Terminal.Action.CursorLeft(currentParameter.max(1)))
       inputBuffer = tail
     case Some('H', tail) => {
       parameters.length match {
@@ -188,5 +189,6 @@ object Terminal {
     case CursorUp(distance : Int)
     case CursorDown(distance : Int)
     case CursorRight(distance : Int)
+    case CursorLeft(distance : Int)
   }
 }
