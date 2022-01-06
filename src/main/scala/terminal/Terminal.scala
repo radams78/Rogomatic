@@ -12,14 +12,13 @@ import scala.annotation.meta.param
 class Terminal(x: Int = 1, 
                y: Int = 1,
                initialScreenContents : String = "") {
-  private var cursorX = x
-  private var cursorY = y
+  private var cursor = Position(x, y)
   private var inputBuffer: Queue[Char] = Queue()
   private var screen : Screen = Screen(initialScreenContents)
 
   def getScreen(): Seq[String] = screen.getContents()
-  def getCursorX(): Int = cursorX
-  def getCursorY(): Int = cursorY
+  def getCursorX(): Int = cursor.x
+  def getCursorY(): Int = cursor.y
 
   def receiveChar(char: Char): Unit = char match {
     case Terminal.NUL | Terminal.DEL => ()
@@ -27,18 +26,18 @@ class Terminal(x: Int = 1,
       inputBuffer = inputBuffer :+ c
       inputBuffer.dequeue match
         case (Terminal.BS, tail) =>
-          if cursorX > 1 then cursorX -= 1
+          cursor = cursor.left()
           inputBuffer = tail
         case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-          if cursorY < Terminal.HEIGHT then cursorY += 1
+          cursor = cursor.down()
           inputBuffer = tail
         case (Terminal.CR, tail) =>
-          cursorX = 1
+          cursor = Position(1, cursor.y)
           inputBuffer = tail
         case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
         case (c, tail) if !c.isControl => {
-          screen.printChar(cursorX, cursorY, c)
-          if (cursorX < Terminal.WIDTH) then cursorX += 1
+          screen.printChar(cursor.x, cursor.y, c)
+          cursor = cursor.right()
           inputBuffer = tail
         }
         case (c, tail) => throw new Error("Unrecognized character " + c)
@@ -88,12 +87,12 @@ class Terminal(x: Int = 1,
     case Some('J', tail) => {
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
-          for x <- cursorX to Terminal.WIDTH do screen.printChar(x, cursorY, ' ')
-          for y <- cursorY + 1 to Terminal.HEIGHT do screen.eraseLine(y)
+          for x <- cursor.x to Terminal.WIDTH do screen.printChar(x, cursor.y, ' ')
+          for y <- cursor.y + 1 to Terminal.HEIGHT do screen.eraseLine(y)
         }
         case 1 => {
-          for y <- 1 until cursorY do screen.eraseLine(y)
-          for x <- 1 to cursorX do screen.printChar(x, cursorY, ' ')
+          for y <- 1 until cursor.y do screen.eraseLine(y)
+          for x <- 1 to cursor.x do screen.printChar(x, cursor.y, ' ')
         }
         case 2 => {
           for y <- 1 to Terminal.HEIGHT do screen.eraseLine(y)
@@ -107,7 +106,7 @@ class Terminal(x: Int = 1,
       inputBuffer = tail
     }
     case Some('K', tail) =>
-      for x <- cursorX to Terminal.WIDTH do screen.printChar(x, cursorY, ' ')
+      for x <- cursor.x to Terminal.WIDTH do screen.printChar(x, cursor.y, ' ')
       inputBuffer = tail
     case Some(';', tail) =>
       parseSequenceAfterCSI(
@@ -127,27 +126,26 @@ class Terminal(x: Int = 1,
     case None => ()
 
     private def moveUp(n : Int = 1) : Unit = {
-      cursorY = (cursorY - n).max(1)
+      cursor = cursor.up(n)
     }
 
     private def moveDown(n : Int = 1) : Unit = {
-      cursorY = (cursorY + n).min(Terminal.HEIGHT)
+      cursor = cursor.down(n)
     }
 
     private def moveRight(n : Int = 1) : Unit = {
-      cursorX = (cursorX + n).min(Terminal.WIDTH)
+      cursor = cursor.right(n)
     }
 
     private def moveLeft(n : Int = 1) : Unit = {
-      cursorX = (cursorX - n).max(1)
+      cursor = cursor.left(n)
     }
 
     // Ignores invalid positions
     private def moveTo(x : Int, y : Int) : Unit = {
       if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT
       then {
-        cursorX = x
-        cursorY = y
+        cursor = Position(x, y)
       }
       else {
         // DEBUG
