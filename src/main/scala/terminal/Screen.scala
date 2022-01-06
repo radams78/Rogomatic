@@ -37,4 +37,9 @@ class Screen(initialContents : String) {
       for _x <- 1 to x do printChar(_x, y, ' ')
     else println(s"Illegal position: $x,$y")
   }
+
+  def eraseToEndOfScreen(x : Int, y : Int) : Unit = {
+    eraseToEndOfLine(x, y)
+    for _y <- y + 1 to Terminal.HEIGHT do eraseLine(_y)
+  }
 }
