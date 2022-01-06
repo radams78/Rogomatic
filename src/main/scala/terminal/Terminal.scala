@@ -28,6 +28,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
   private def performAction(action : Terminal.Action) = action match {
     case Terminal.Action.Backspace => cursor = cursor.left()
     case Terminal.Action.Linefeed => cursor = cursor.down()
+    case Terminal.Action.CarriageReturn => cursor = Position(1, cursor.y)
   }
 
   private def processInputBuffer(): Unit = {
@@ -39,7 +40,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         performAction(Terminal.Action.Linefeed)
         inputBuffer = tail
       case (Terminal.CR, tail) =>
-        cursor = Position(1, cursor.y)
+        performAction(Terminal.Action.CarriageReturn)
         inputBuffer = tail
       case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
       case (c, tail) if !c.isControl => {
@@ -177,5 +178,6 @@ object Terminal {
   enum Action {
     case Backspace
     case Linefeed
+    case CarriageReturn
   }
 }
