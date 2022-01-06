@@ -106,7 +106,15 @@ class Terminal(x: Int = 1,
       inputBuffer = tail
     }
     case Some('K', tail) =>
-      for x <- cursor.x to Terminal.WIDTH do screen.printChar(x, cursor.y, ' ')
+      currentParameter match {
+        case 0 => for x <- cursor.x to Terminal.WIDTH do screen.printChar(x, cursor.y, ' ')
+        case 1 => for x <- 1 to cursor.x do screen.printChar(x, cursor.y, ' ')
+        case 2 => screen.eraseLine(cursor.y)
+        case n => {
+          // DEBUG
+          println(s"Illegal control sequence: ESC ${sequence.mkString}K")
+        }
+      }
       inputBuffer = tail
     case Some(';', tail) =>
       parseSequenceAfterCSI(
