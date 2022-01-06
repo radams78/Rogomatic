@@ -108,7 +108,7 @@ class Terminal(x: Int = 1,
     case Some('K', tail) =>
       currentParameter match {
         case 0 => screen.eraseToEndOfLine(cursor.x, cursor.y)
-        case 1 => for x <- 1 to cursor.x do screen.printChar(x, cursor.y, ' ')
+        case 1 => screen.eraseFromStartOfLine(cursor.x, cursor.y)
         case 2 => screen.eraseLine(cursor.y)
         case n => {
           // DEBUG
