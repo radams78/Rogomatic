@@ -88,9 +88,7 @@ class Terminal(x: Int = 1,
       if (parameters.isEmpty) then currentParameter match {
         case 0 => screen.eraseToEndOfScreen(cursor.x, cursor.y)
         case 1 => screen.eraseFromStartOfScreen(cursor.x, cursor.y)
-        case 2 => {
-          for y <- 1 to Terminal.HEIGHT do screen.eraseLine(y)
-        }
+        case 2 => screen.eraseScreen()
         case n => {
           // DEBUG
           println(s"Illegal control sequence: ESC ${sequence.mkString}J")

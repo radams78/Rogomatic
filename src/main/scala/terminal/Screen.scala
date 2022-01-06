@@ -1,7 +1,8 @@
 package terminal
 
 class Screen(initialContents : String) {
-  var screenContents : Array[Array[Char]] = initialContents
+  var screenContents : Array[Array[Char]] = 
+    initialContents
     .split('\n')
     .padTo(24, "")
     .map(_.padTo(80,' ').toCharArray)
@@ -47,4 +48,6 @@ class Screen(initialContents : String) {
     for _y <- 1 until y do eraseLine(_y)
     eraseFromStartOfLine(x, y)
   }
+
+  def eraseScreen() : Unit = screenContents = Array.fill(24)(Array.fill(80)(' '))
 }
