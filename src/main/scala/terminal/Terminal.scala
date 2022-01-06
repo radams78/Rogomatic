@@ -41,6 +41,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       screen.eraseToEndOfScreen(cursor.x, cursor.y)
     case Terminal.Action.EraseFromStartOfScreen =>
       screen.eraseFromStartOfScreen(cursor.x, cursor.y)
+    case Terminal.Action.EraseScreen => screen.eraseScreen()
     case Terminal.Action.UnrecognizedSequence(seq) => {
       // DEBUG
       println("Unrecognized character sequence:")
@@ -117,7 +118,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         currentParameter match {
           case 0 => performAction(Terminal.Action.EraseToEndOfScreen)
           case 1 => performAction(Terminal.Action.EraseFromStartOfScreen)
-          case 2 => screen.eraseScreen()
+          case 2 => performAction(Terminal.Action.EraseScreen)
           case n => {
             performAction(
               Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J')
@@ -214,6 +215,7 @@ object Terminal {
     case MoveCursor(x: Int, y: Int)
     case EraseToEndOfScreen
     case EraseFromStartOfScreen
+    case EraseScreen
     case UnrecognizedSequence(seq: Seq[Char])
   }
 }
