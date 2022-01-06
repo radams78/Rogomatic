@@ -23,4 +23,11 @@ class Screen(initialContents : String) {
       for x <- 1 to Terminal.WIDTH do printChar(x, y, ' ')
     else println(s"Illegal y-position: $y")
   }
+
+  def eraseToEndOfLine(x : Int, y : Int) : Unit = {
+    if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT
+    then
+      for _x <- x to Terminal.WIDTH do printChar(_x, y, ' ')
+    else println(s"Illegal position: $x,$y")
+  }
 }
