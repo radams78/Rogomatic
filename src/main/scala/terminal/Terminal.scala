@@ -21,23 +21,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Terminal.NUL | Terminal.DEL => ()
     case c =>
       inputBuffer = inputBuffer :+ c
-      inputBuffer.dequeue match
-        case (Terminal.BS, tail) =>
-          cursor = cursor.left()
-          inputBuffer = tail
-        case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-          cursor = cursor.down()
-          inputBuffer = tail
-        case (Terminal.CR, tail) =>
-          cursor = Position(1, cursor.y)
-          inputBuffer = tail
-        case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
-        case (c, tail) if !c.isControl => {
-          screen.printChar(cursor.x, cursor.y, c)
-          cursor = cursor.right()
-          inputBuffer = tail
-        }
-        case (c, tail) => throw new Error("Unrecognized character " + c)
+      processInputBuffer()
   }
 
   private def processInputBuffer(): Unit = {
@@ -59,7 +43,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       }
       case (c, tail) => throw new Error("Unrecognized character " + c)
   }
-  
+
   private def parseSequenceAfterEscape(tail: Queue[Char]): Unit =
     tail.dequeueOption match
       case Some('[', tail) => parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
