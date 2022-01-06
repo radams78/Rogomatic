@@ -87,7 +87,7 @@ class Terminal(x: Int = 1,
     case Some('J', tail) => {
       if (parameters.isEmpty) then currentParameter match {
         case 0 => {
-          for x <- cursor.x to Terminal.WIDTH do screen.printChar(x, cursor.y, ' ')
+          screen.eraseToEndOfLine(cursor.x, cursor.y)
           for y <- cursor.y + 1 to Terminal.HEIGHT do screen.eraseLine(y)
         }
         case 1 => {
