@@ -25,17 +25,24 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       processInputBuffer()
   }
 
-  private def performAction(action : Terminal.Action) = action match {
-    case Terminal.Action.Backspace => cursor = cursor.left()
-    case Terminal.Action.Linefeed => cursor = cursor.down()
+  private def performAction(action: Terminal.Action) = action match {
+    case Terminal.Action.Backspace      => cursor = cursor.left()
+    case Terminal.Action.Linefeed       => cursor = cursor.down()
     case Terminal.Action.CarriageReturn => cursor = Position(1, cursor.y)
     case Terminal.Action.PrintCharacter(c) =>
       screen.printChar(cursor.x, cursor.y, c)
-      cursor = cursor.right()  
-    case Terminal.Action.CursorUp(n) => moveUp(n)
-    case Terminal.Action.CursorDown(n) => moveDown(n)
-    case Terminal.Action.CursorRight(n) => moveRight(n)
-    case Terminal.Action.CursorLeft(n) => moveLeft(n)
+      cursor = cursor.right()
+    case Terminal.Action.CursorUp(n)      => moveUp(n)
+    case Terminal.Action.CursorDown(n)    => moveDown(n)
+    case Terminal.Action.CursorRight(n)   => moveRight(n)
+    case Terminal.Action.CursorLeft(n)    => moveLeft(n)
+    case Terminal.Action.MoveCursor(x, y) => moveTo(x, y)
+    case Terminal.Action.UnrecognizedSequence(seq) => {
+      // DEBUG
+      println("Unrecognized character sequence:")
+      println(seq.mkString)
+      println(seq.map(_.toInt))
+    }
   }
 
   private def processInputBuffer(): Unit = {
@@ -54,14 +61,15 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         performAction(Terminal.Action.PrintCharacter(c))
         inputBuffer = tail
       }
-      case (c, tail) => throw new Error("Unrecognized character " + c)
+      case (c, tail) =>
+        performAction(Terminal.Action.UnrecognizedSequence(Seq(c)))
   }
 
   private def parseSequenceAfterEscape(tail: Queue[Char]): Unit =
     tail.dequeueOption match
       case Some('[', tail) => parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
       case Some(c, tail) =>
-        throw new Error("Unrecognized escape sequence: ESC + " + c)
+        performAction(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)))
       case None => ()
 
   private def parseSequenceAfterCSI(
@@ -85,15 +93,17 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Some('H', tail) => {
       parameters.length match {
         case 0 =>
-          if currentParameter == 0 then moveTo(1, 1)
+          if currentParameter == 0 then
+            performAction(Terminal.Action.MoveCursor(1, 1))
         case 1 => {
           val x = currentParameter.max(1)
           val y = parameters(0).max(1)
-          moveTo(x, y)
+          performAction(Terminal.Action.MoveCursor(x, y))
         }
         case n => {
-          // DEBUG
-          println(s"Illegal command sequence: ESC ${sequence.mkString}H")
+          performAction(
+            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H')
+          )
         }
       }
       inputBuffer = tail
@@ -105,11 +115,15 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
           case 1 => screen.eraseFromStartOfScreen(cursor.x, cursor.y)
           case 2 => screen.eraseScreen()
           case n => {
-            // DEBUG
-            println(s"Illegal control sequence: ESC ${sequence.mkString}J")
+            performAction(
+              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J')
+            )
           }
         }
-      else println(s"Illegal control sequence: ESC ${sequence.mkString}J")
+      else
+        performAction(
+          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J')
+        )
       inputBuffer = tail
     }
     case Some('K', tail) =>
@@ -118,8 +132,9 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         case 1 => screen.eraseFromStartOfLine(cursor.x, cursor.y)
         case 2 => screen.eraseLine(cursor.y)
         case n => {
-          // DEBUG
-          println(s"Illegal control sequence: ESC ${sequence.mkString}K")
+          performAction(
+            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K')
+          )
         }
       }
       inputBuffer = tail
@@ -138,7 +153,9 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         10 * currentParameter + n.asDigit
       )
     case Some(c, tail) =>
-      println(s"Unrecognized escape sequence: ESC + ${sequence.mkString}$c")
+      performAction(
+        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c')
+      )
     case None => ()
 
   private def moveUp(n: Int = 1): Unit = {
@@ -185,10 +202,12 @@ object Terminal {
     case Backspace
     case Linefeed
     case CarriageReturn
-    case PrintCharacter(c : Char)
-    case CursorUp(distance : Int)
-    case CursorDown(distance : Int)
-    case CursorRight(distance : Int)
-    case CursorLeft(distance : Int)
+    case PrintCharacter(c: Char)
+    case CursorUp(distance: Int)
+    case CursorDown(distance: Int)
+    case CursorRight(distance: Int)
+    case CursorLeft(distance: Int)
+    case MoveCursor(x: Int, y: Int)
+    case UnrecognizedSequence(seq: Seq[Char])
   }
 }
