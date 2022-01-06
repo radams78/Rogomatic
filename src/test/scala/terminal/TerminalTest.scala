@@ -274,4 +274,19 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
       ++ Seq.fill(14)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
     )
   }
+
+  it should "when given an EL sequence with parameter 1, erase from the start of the line" in {
+    val terminal : Terminal = Terminal(10, 10,
+      (("abcdefghijklmnopqrstuvwxyz".padTo(80,' ')) + '\n') * 24
+    )
+    terminal.receiveChar('\u001b')
+    terminal.receiveChar('[')
+    terminal.receiveChar('1')
+    terminal.receiveChar('K')
+    terminal.getScreen() should contain theSameElementsInOrderAs (
+      (Seq.fill(9)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
+      :+ "          klmnopqrstuvwxyz".padTo(80,' '))
+      ++ Seq.fill(14)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
+    )
+  }
 }
