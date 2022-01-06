@@ -1,6 +1,7 @@
 package terminal
 
 import scala.collection.immutable.Queue
+import java.time.temporal.Temporal
 
 /** This terminal: * ignores tab characters * does not scroll - ignores line
   * feeds and cursor down commands when at the bottom of the screen * ignores SO
@@ -26,6 +27,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
 
   private def performAction(action : Terminal.Action) = action match {
     case Terminal.Action.Backspace => cursor = cursor.left()
+    case Terminal.Action.Linefeed => cursor = cursor.down()
   }
 
   private def processInputBuffer(): Unit = {
@@ -34,7 +36,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         performAction(Terminal.Action.Backspace)
         inputBuffer = tail
       case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-        cursor = cursor.down()
+        performAction(Terminal.Action.Linefeed)
         inputBuffer = tail
       case (Terminal.CR, tail) =>
         cursor = Position(1, cursor.y)
@@ -174,5 +176,6 @@ object Terminal {
 
   enum Action {
     case Backspace
+    case Linefeed
   }
 }
