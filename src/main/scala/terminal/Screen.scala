@@ -30,4 +30,11 @@ class Screen(initialContents : String) {
       for _x <- x to Terminal.WIDTH do printChar(_x, y, ' ')
     else println(s"Illegal position: $x,$y")
   }
+
+  def eraseFromStartOfLine(x : Int, y : Int) : Unit = {
+    if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT
+    then
+      for _x <- 1 to x do printChar(_x, y, ' ')
+    else println(s"Illegal position: $x,$y")
+  }
 }
