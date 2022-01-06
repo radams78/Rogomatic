@@ -82,92 +82,99 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         performAction(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)))
       case None => ()
 
-  private def parseSequenceAfterCSI(
+  private def _parseSequenceAfterCSI(
       tail: Queue[Char],
       sequence: Seq[Char],
       parameters: Seq[Int],
       currentParameter: Int
-  ): Unit = tail.dequeueOption match
+  ): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match {
     case Some('A', tail) =>
-      performAction(Terminal.Action.CursorUp(currentParameter.max(1)))
-      inputBuffer = tail
+      Some(Terminal.Action.CursorUp(currentParameter.max(1)), tail)
     case Some('B', tail) =>
-      performAction(Terminal.Action.CursorDown(currentParameter.max(1)))
-      inputBuffer = tail
+      Some(Terminal.Action.CursorDown(currentParameter.max(1)), tail)
     case Some('C', tail) =>
-      performAction(Terminal.Action.CursorRight(currentParameter.max(1)))
-      inputBuffer = tail
+      Some(Terminal.Action.CursorRight(currentParameter.max(1)), tail)
     case Some('D', tail) =>
-      performAction(Terminal.Action.CursorLeft(currentParameter.max(1)))
-      inputBuffer = tail
+      Some(Terminal.Action.CursorLeft(currentParameter.max(1)), tail)
     case Some('H', tail) => {
       parameters.length match {
         case 0 =>
-          if currentParameter == 0 then
-            performAction(Terminal.Action.MoveCursor(1, 1))
+          if currentParameter == 0 then Some(Terminal.Action.MoveCursor(1, 1), tail)
+          else Some(Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'), tail)
         case 1 => {
           val x = currentParameter.max(1)
           val y = parameters(0).max(1)
-          performAction(Terminal.Action.MoveCursor(x, y))
+          Some(Terminal.Action.MoveCursor(x, y), tail)
         }
-        case n => {
-          performAction(
-            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H')
+        case n =>
+          Some(
+            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'),
+            tail
           )
-        }
       }
-      inputBuffer = tail
     }
     case Some('J', tail) => {
       if (parameters.isEmpty) then
         currentParameter match {
-          case 0 => performAction(Terminal.Action.EraseToEndOfScreen)
-          case 1 => performAction(Terminal.Action.EraseFromStartOfScreen)
-          case 2 => performAction(Terminal.Action.EraseScreen)
+          case 0 => Some(Terminal.Action.EraseToEndOfScreen, tail)
+          case 1 => Some(Terminal.Action.EraseFromStartOfScreen, tail)
+          case 2 => Some(Terminal.Action.EraseScreen, tail)
           case n => {
-            performAction(
-              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J')
+            Some(
+              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'), tail
             )
           }
         }
       else
-        performAction(
-          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J')
+        Some(
+          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'), tail
         )
-      inputBuffer = tail
     }
     case Some('K', tail) =>
       currentParameter match {
-        case 0 => performAction(Terminal.Action.EraseToEndOfLine)
-        case 1 => performAction(Terminal.Action.EraseFromStartOfLine)
-        case 2 => performAction(Terminal.Action.EraseLine)
+        case 0 => Some(Terminal.Action.EraseToEndOfLine, tail)
+        case 1 => Some(Terminal.Action.EraseFromStartOfLine, tail)
+        case 2 => Some(Terminal.Action.EraseLine, tail)
         case n => {
-          performAction(
-            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K')
+          Some(
+            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K'), tail
           )
         }
       }
-      inputBuffer = tail
     case Some(';', tail) =>
-      parseSequenceAfterCSI(
+      _parseSequenceAfterCSI(
         tail,
         sequence :+ ';',
         parameters :+ currentParameter,
         0
       )
     case Some(n, tail) if n.isDigit =>
-      parseSequenceAfterCSI(
+      _parseSequenceAfterCSI(
         tail,
         sequence :+ n,
         parameters,
         10 * currentParameter + n.asDigit
       )
     case Some(c, tail) =>
-      performAction(
-        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c')
+      Some(
+        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'), tail
       )
-    case None => ()
+    case None => None
+  }
 
+  private def parseSequenceAfterCSI(
+      tail: Queue[Char],
+      sequence: Seq[Char],
+      parameters: Seq[Int],
+      currentParameter: Int
+  ): Unit = {
+    for (cmd, tail) <- _parseSequenceAfterCSI(tail, sequence, parameters, currentParameter)
+    do {
+      performAction(cmd)
+      inputBuffer = tail
+    }
+  }
+  
   private def moveUp(n: Int = 1): Unit = {
     cursor = cursor.up(n)
   }
