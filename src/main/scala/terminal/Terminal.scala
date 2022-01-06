@@ -8,12 +8,10 @@ import scala.collection.immutable.Queue
   * Ignores these sequences: CPR, DA, DECALN, DECDHL, DECDWL, DECID, DECKPAM,
   * DECLL, DECRC, DECREPTPARM, DECREQTPARM, DECSC, DECSTBM, DECSWL, DECTST, DSR
   */
-class Terminal(x: Int = 1, 
-               y: Int = 1,
-               initialScreenContents : String = "") {
-  private var cursor : Position = Position(x, y)
+class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
+  private var cursor: Position = Position(x, y)
   private var inputBuffer: Queue[Char] = Queue()
-  private var screen : Screen = Screen(initialScreenContents)
+  private var screen: Screen = Screen(initialScreenContents)
 
   def getScreen(): Seq[String] = screen.getContents()
   def getCursorX(): Int = cursor.x
@@ -42,6 +40,26 @@ class Terminal(x: Int = 1,
         case (c, tail) => throw new Error("Unrecognized character " + c)
   }
 
+  private def processInputBuffer(): Unit = {
+    inputBuffer.dequeue match
+      case (Terminal.BS, tail) =>
+        cursor = cursor.left()
+        inputBuffer = tail
+      case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
+        cursor = cursor.down()
+        inputBuffer = tail
+      case (Terminal.CR, tail) =>
+        cursor = Position(1, cursor.y)
+        inputBuffer = tail
+      case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
+      case (c, tail) if !c.isControl => {
+        screen.printChar(cursor.x, cursor.y, c)
+        cursor = cursor.right()
+        inputBuffer = tail
+      }
+      case (c, tail) => throw new Error("Unrecognized character " + c)
+  }
+  
   private def parseSequenceAfterEscape(tail: Queue[Char]): Unit =
     tail.dequeueOption match
       case Some('[', tail) => parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
@@ -84,15 +102,16 @@ class Terminal(x: Int = 1,
       inputBuffer = tail
     }
     case Some('J', tail) => {
-      if (parameters.isEmpty) then currentParameter match {
-        case 0 => screen.eraseToEndOfScreen(cursor.x, cursor.y)
-        case 1 => screen.eraseFromStartOfScreen(cursor.x, cursor.y)
-        case 2 => screen.eraseScreen()
-        case n => {
-          // DEBUG
-          println(s"Illegal control sequence: ESC ${sequence.mkString}J")
+      if (parameters.isEmpty) then
+        currentParameter match {
+          case 0 => screen.eraseToEndOfScreen(cursor.x, cursor.y)
+          case 1 => screen.eraseFromStartOfScreen(cursor.x, cursor.y)
+          case 2 => screen.eraseScreen()
+          case n => {
+            // DEBUG
+            println(s"Illegal control sequence: ESC ${sequence.mkString}J")
+          }
         }
-      }
       else println(s"Illegal control sequence: ESC ${sequence.mkString}J")
       inputBuffer = tail
     }
@@ -121,36 +140,35 @@ class Terminal(x: Int = 1,
         parameters,
         10 * currentParameter + n.asDigit
       )
-    case Some(c, tail) => println(s"Unrecognized escape sequence: ESC + ${sequence.mkString}$c")
+    case Some(c, tail) =>
+      println(s"Unrecognized escape sequence: ESC + ${sequence.mkString}$c")
     case None => ()
 
-    private def moveUp(n : Int = 1) : Unit = {
-      cursor = cursor.up(n)
-    }
+  private def moveUp(n: Int = 1): Unit = {
+    cursor = cursor.up(n)
+  }
 
-    private def moveDown(n : Int = 1) : Unit = {
-      cursor = cursor.down(n)
-    }
+  private def moveDown(n: Int = 1): Unit = {
+    cursor = cursor.down(n)
+  }
 
-    private def moveRight(n : Int = 1) : Unit = {
-      cursor = cursor.right(n)
-    }
+  private def moveRight(n: Int = 1): Unit = {
+    cursor = cursor.right(n)
+  }
 
-    private def moveLeft(n : Int = 1) : Unit = {
-      cursor = cursor.left(n)
-    }
+  private def moveLeft(n: Int = 1): Unit = {
+    cursor = cursor.left(n)
+  }
 
-    // Ignores invalid positions
-    private def moveTo(x : Int, y : Int) : Unit = {
-      if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT
-      then {
-        cursor = Position(x, y)
-      }
-      else {
-        // DEBUG
-        println(s"Illegal position: $x,$y")
-      }
+  // Ignores invalid positions
+  private def moveTo(x: Int, y: Int): Unit = {
+    if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT then {
+      cursor = Position(x, y)
+    } else {
+      // DEBUG
+      println(s"Illegal position: $x,$y")
     }
+  }
 }
 
 object Terminal {
