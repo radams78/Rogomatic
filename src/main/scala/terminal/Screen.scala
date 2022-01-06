@@ -42,4 +42,9 @@ class Screen(initialContents : String) {
     eraseToEndOfLine(x, y)
     for _y <- y + 1 to Terminal.HEIGHT do eraseLine(_y)
   }
+
+  def eraseFromStartOfScreen(x : Int, y : Int) : Unit = {
+    for _y <- 1 until y do eraseLine(_y)
+    eraseFromStartOfLine(x, y)
+  }
 }
