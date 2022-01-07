@@ -77,7 +77,12 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
 
   private def parseSequenceAfterEscape(tail: Queue[Char]): Unit =
     tail.dequeueOption match
-      case Some('[', tail) => parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+      case Some('[', tail) => 
+        for (cmd, tail) <- _parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+        do {
+          performAction(cmd)
+          inputBuffer = tail
+        }
       case Some(c, tail) =>
         performAction(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)))
       case None => ()
@@ -162,19 +167,6 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case None => None
   }
 
-  private def parseSequenceAfterCSI(
-      tail: Queue[Char],
-      sequence: Seq[Char],
-      parameters: Seq[Int],
-      currentParameter: Int
-  ): Unit = {
-    for (cmd, tail) <- _parseSequenceAfterCSI(tail, sequence, parameters, currentParameter)
-    do {
-      performAction(cmd)
-      inputBuffer = tail
-    }
-  }
-  
   private def moveUp(n: Int = 1): Unit = {
     cursor = cursor.up(n)
   }
