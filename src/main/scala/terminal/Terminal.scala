@@ -80,13 +80,6 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         performAction(Terminal.Action.UnrecognizedSequence(Seq(c)))
   }
 
-  private def parseSequenceAfterEscape(tail: Queue[Char]): Unit =
-    for (cmd, tail) <- _parseSequenceAfterEscape(tail)
-      do {
-        performAction(cmd)
-        inputBuffer = tail
-      }
-
   private def _parseSequenceAfterEscape(tail : Queue[Char]): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
       case Some('[', tail) => 
         _parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
