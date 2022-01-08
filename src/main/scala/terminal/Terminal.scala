@@ -56,7 +56,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
   }
 
   private def processInputBuffer(): Unit = {
-    inputBuffer.dequeue match
+    inputBuffer.dequeue match {
       case (Terminal.BS, tail) =>
         performAction(Terminal.Action.Backspace)
         inputBuffer = tail
@@ -78,8 +78,18 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       }
       case (c, tail) =>
         performAction(Terminal.Action.UnrecognizedSequence(Seq(c)))
+    }
   }
 
+  private def _processInputBuffer(inputBuffer : Queue[Char]) : Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
+    case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
+    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) => Some(Terminal.Action.Linefeed, tail)
+    case (Terminal.CR, tail) => Some(Terminal.Action.CarriageReturn, tail)
+    case (Terminal.ESC, tail) => _parseSequenceAfterEscape(tail)
+    case (c, tail) if !c.isControl => Some(Terminal.Action.PrintCharacter(c), tail)
+    case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
+  }
+  
   private def _parseSequenceAfterEscape(tail : Queue[Char]): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
       case Some('[', tail) => 
         _parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
