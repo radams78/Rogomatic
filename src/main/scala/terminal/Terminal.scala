@@ -55,30 +55,9 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     }
   }
 
-  private def processInputBuffer(): Unit = {
-    inputBuffer.dequeue match {
-      case (Terminal.BS, tail) =>
-        performAction(Terminal.Action.Backspace)
-        inputBuffer = tail
-      case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-        performAction(Terminal.Action.Linefeed)
-        inputBuffer = tail
-      case (Terminal.CR, tail) =>
-        performAction(Terminal.Action.CarriageReturn)
-        inputBuffer = tail
-      case (Terminal.ESC, tail) => 
-        for (cmd, tail) <- _parseSequenceAfterEscape(tail)
-        do {
-          performAction(cmd)
-          inputBuffer = tail
-        }
-      case (c, tail) if !c.isControl => {
-        performAction(Terminal.Action.PrintCharacter(c))
-        inputBuffer = tail
-      }
-      case (c, tail) =>
-        performAction(Terminal.Action.UnrecognizedSequence(Seq(c)))
-    }
+  private def processInputBuffer(): Unit = for (action, tail) <- _processInputBuffer(inputBuffer) do {
+    performAction(action)
+    inputBuffer = tail
   }
 
   private def _processInputBuffer(inputBuffer : Queue[Char]) : Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
@@ -89,7 +68,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case (c, tail) if !c.isControl => Some(Terminal.Action.PrintCharacter(c), tail)
     case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
   }
-  
+
   private def _parseSequenceAfterEscape(tail : Queue[Char]): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
       case Some('[', tail) => 
         _parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
