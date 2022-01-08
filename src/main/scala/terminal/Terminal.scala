@@ -66,7 +66,12 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       case (Terminal.CR, tail) =>
         performAction(Terminal.Action.CarriageReturn)
         inputBuffer = tail
-      case (Terminal.ESC, tail) => parseSequenceAfterEscape(tail)
+      case (Terminal.ESC, tail) => 
+        for (cmd, tail) <- _parseSequenceAfterEscape(tail)
+        do {
+          performAction(cmd)
+          inputBuffer = tail
+        }
       case (c, tail) if !c.isControl => {
         performAction(Terminal.Action.PrintCharacter(c))
         inputBuffer = tail
