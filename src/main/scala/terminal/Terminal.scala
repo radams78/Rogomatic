@@ -71,12 +71,52 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
 
   private def _parseSequenceAfterEscape(tail : Queue[Char]): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
       case Some('[', tail) => 
-        _parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+        Terminal.parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
       case Some(c, tail) =>
         Some(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
       case None => None
 
-  private def _parseSequenceAfterCSI(
+  private def moveUp(n: Int = 1): Unit = {
+    cursor = cursor.up(n)
+  }
+
+  private def moveDown(n: Int = 1): Unit = {
+    cursor = cursor.down(n)
+  }
+
+  private def moveRight(n: Int = 1): Unit = {
+    cursor = cursor.right(n)
+  }
+
+  private def moveLeft(n: Int = 1): Unit = {
+    cursor = cursor.left(n)
+  }
+
+  // Ignores invalid positions
+  private def moveTo(x: Int, y: Int): Unit = {
+    if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT then {
+      cursor = Position(x, y)
+    } else {
+      // DEBUG
+      println(s"Illegal position: $x,$y")
+    }
+  }
+}
+
+object Terminal {
+  val HEIGHT = 24
+  val WIDTH = 80
+  private val NUL = '\u0000'
+  private val BS = '\u0008'
+  private val DEL = '\u007f'
+  private val LF = '\n' // same as
+
+  private val VT = '\u000b'
+  private val FF = '\u000c'
+  private val CR = '\u000d'
+  private val ESC = '\u001b'
+
+  private def parseSequenceAfterCSI(
       tail: Queue[Char],
       sequence: Seq[Char],
       parameters: Seq[Int],
@@ -136,14 +176,14 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
         }
       }
     case Some(';', tail) =>
-      _parseSequenceAfterCSI(
+      parseSequenceAfterCSI(
         tail,
         sequence :+ ';',
         parameters :+ currentParameter,
         0
       )
     case Some(n, tail) if n.isDigit =>
-      _parseSequenceAfterCSI(
+      parseSequenceAfterCSI(
         tail,
         sequence :+ n,
         parameters,
@@ -155,46 +195,6 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       )
     case None => None
   }
-
-  private def moveUp(n: Int = 1): Unit = {
-    cursor = cursor.up(n)
-  }
-
-  private def moveDown(n: Int = 1): Unit = {
-    cursor = cursor.down(n)
-  }
-
-  private def moveRight(n: Int = 1): Unit = {
-    cursor = cursor.right(n)
-  }
-
-  private def moveLeft(n: Int = 1): Unit = {
-    cursor = cursor.left(n)
-  }
-
-  // Ignores invalid positions
-  private def moveTo(x: Int, y: Int): Unit = {
-    if 1 <= x && x <= Terminal.WIDTH && 1 <= y && y <= Terminal.HEIGHT then {
-      cursor = Position(x, y)
-    } else {
-      // DEBUG
-      println(s"Illegal position: $x,$y")
-    }
-  }
-}
-
-object Terminal {
-  val HEIGHT = 24
-  val WIDTH = 80
-  private val NUL = '\u0000'
-  private val BS = '\u0008'
-  private val DEL = '\u007f'
-  private val LF = '\n' // same as
-
-  private val VT = '\u000b'
-  private val FF = '\u000c'
-  private val CR = '\u000d'
-  private val ESC = '\u001b'
 
   enum Action {
     case Backspace
