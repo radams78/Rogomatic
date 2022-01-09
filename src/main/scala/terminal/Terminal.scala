@@ -55,26 +55,25 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     }
   }
 
-  private def processInputBuffer(): Unit = for (action, tail) <- _processInputBuffer(inputBuffer) do {
+  private def processInputBuffer(): Unit = for
+    (action, tail) <- _processInputBuffer(inputBuffer)
+  do {
     performAction(action)
     inputBuffer = tail
   }
 
-  private def _processInputBuffer(inputBuffer : Queue[Char]) : Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
+  private def _processInputBuffer(
+      inputBuffer: Queue[Char]
+  ): Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
     case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
-    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) => Some(Terminal.Action.Linefeed, tail)
-    case (Terminal.CR, tail) => Some(Terminal.Action.CarriageReturn, tail)
-    case (Terminal.ESC, tail) => _parseSequenceAfterEscape(tail)
-    case (c, tail) if !c.isControl => Some(Terminal.Action.PrintCharacter(c), tail)
+    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
+      Some(Terminal.Action.Linefeed, tail)
+    case (Terminal.CR, tail)  => Some(Terminal.Action.CarriageReturn, tail)
+    case (Terminal.ESC, tail) => Terminal.parseSequenceAfterEscape(tail)
+    case (c, tail) if !c.isControl =>
+      Some(Terminal.Action.PrintCharacter(c), tail)
     case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
   }
-
-  private def _parseSequenceAfterEscape(tail : Queue[Char]): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
-      case Some('[', tail) => 
-        Terminal.parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
-      case Some(c, tail) =>
-        Some(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
-      case None => None
 
   private def moveUp(n: Int = 1): Unit = {
     cursor = cursor.up(n)
@@ -116,6 +115,15 @@ object Terminal {
   private val CR = '\u000d'
   private val ESC = '\u001b'
 
+  private def parseSequenceAfterEscape(
+      tail: Queue[Char]
+  ): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
+    case Some('[', tail) =>
+      Terminal.parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+    case Some(c, tail) =>
+      Some(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
+    case None => None
+
   private def parseSequenceAfterCSI(
       tail: Queue[Char],
       sequence: Seq[Char],
@@ -133,8 +141,13 @@ object Terminal {
     case Some('H', tail) => {
       parameters.length match {
         case 0 =>
-          if currentParameter == 0 then Some(Terminal.Action.MoveCursor(1, 1), tail)
-          else Some(Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'), tail)
+          if currentParameter == 0 then
+            Some(Terminal.Action.MoveCursor(1, 1), tail)
+          else
+            Some(
+              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'),
+              tail
+            )
         case 1 => {
           val x = currentParameter.max(1)
           val y = parameters(0).max(1)
@@ -155,13 +168,15 @@ object Terminal {
           case 2 => Some(Terminal.Action.EraseScreen, tail)
           case n => {
             Some(
-              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'), tail
+              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'),
+              tail
             )
           }
         }
       else
         Some(
-          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'), tail
+          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'),
+          tail
         )
     }
     case Some('K', tail) =>
@@ -171,7 +186,8 @@ object Terminal {
         case 2 => Some(Terminal.Action.EraseLine, tail)
         case n => {
           Some(
-            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K'), tail
+            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K'),
+            tail
           )
         }
       }
@@ -191,7 +207,8 @@ object Terminal {
       )
     case Some(c, tail) =>
       Some(
-        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'), tail
+        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'),
+        tail
       )
     case None => None
   }
