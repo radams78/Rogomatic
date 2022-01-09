@@ -56,23 +56,10 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
   }
 
   private def processInputBuffer(): Unit = for
-    (action, tail) <- _processInputBuffer(inputBuffer)
+    (action, tail) <- Terminal.processInputBuffer(inputBuffer)
   do {
     performAction(action)
     inputBuffer = tail
-  }
-
-  private def _processInputBuffer(
-      inputBuffer: Queue[Char]
-  ): Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
-    case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
-    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-      Some(Terminal.Action.Linefeed, tail)
-    case (Terminal.CR, tail)  => Some(Terminal.Action.CarriageReturn, tail)
-    case (Terminal.ESC, tail) => Terminal.parseSequenceAfterEscape(tail)
-    case (c, tail) if !c.isControl =>
-      Some(Terminal.Action.PrintCharacter(c), tail)
-    case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
   }
 
   private def moveUp(n: Int = 1): Unit = {
@@ -114,6 +101,19 @@ object Terminal {
   private val FF = '\u000c'
   private val CR = '\u000d'
   private val ESC = '\u001b'
+
+    private def processInputBuffer(
+      inputBuffer: Queue[Char]
+  ): Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
+    case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
+    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
+      Some(Terminal.Action.Linefeed, tail)
+    case (Terminal.CR, tail)  => Some(Terminal.Action.CarriageReturn, tail)
+    case (Terminal.ESC, tail) => Terminal.parseSequenceAfterEscape(tail)
+    case (c, tail) if !c.isControl =>
+      Some(Terminal.Action.PrintCharacter(c), tail)
+    case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
+  }
 
   private def parseSequenceAfterEscape(
       tail: Queue[Char]
