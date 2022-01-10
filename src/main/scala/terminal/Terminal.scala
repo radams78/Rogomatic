@@ -139,26 +139,8 @@ object Terminal {
     case Some('D', tail) =>
       Some(Terminal.Action.CursorLeft(currentParameter.max(1)), tail)
     case Some(c, tail) if c == 'H' || c == 'f' => 
-      Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ 'H'), tail)
-    case Some('J', tail) => {
-      if (parameters.isEmpty) then
-        currentParameter match {
-          case 0 => Some(Terminal.Action.EraseToEndOfScreen, tail)
-          case 1 => Some(Terminal.Action.EraseFromStartOfScreen, tail)
-          case 2 => Some(Terminal.Action.EraseScreen, tail)
-          case n => {
-            Some(
-              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'),
-              tail
-            )
-          }
-        }
-      else
-        Some(
-          Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'J'),
-          tail
-        )
-    }
+      Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ c), tail)
+    case Some('J', tail) => Some(ep(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
     case Some('K', tail) =>
       currentParameter match {
         case 0 => Some(Terminal.Action.EraseToEndOfLine, tail)
@@ -208,6 +190,17 @@ object Terminal {
         case n =>
           Terminal.Action.UnrecognizedSequence(sequence)
       }
+    }
+
+  private def ep(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action = {
+      if (parameters.length == 1) then
+        parameters.head match {
+          case 0 => Terminal.Action.EraseToEndOfScreen
+          case 1 => Terminal.Action.EraseFromStartOfScreen
+          case 2 => Terminal.Action.EraseScreen
+          case n => Terminal.Action.UnrecognizedSequence(sequence)
+        }
+      else Terminal.Action.UnrecognizedSequence(sequence)
     }
 
   enum Action {
