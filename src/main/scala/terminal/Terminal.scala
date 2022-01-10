@@ -32,7 +32,7 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Terminal.Action.PrintCharacter(c) =>
       screen.printChar(cursor.x, cursor.y, c)
       cursor = cursor.right()
-    case Terminal.Action.CursorUp(n)      => moveUp(n)
+    case Terminal.Action.CursorUp(n)      => cursor = cursor.up(n)
     case Terminal.Action.CursorDown(n)    => moveDown(n)
     case Terminal.Action.CursorRight(n)   => moveRight(n)
     case Terminal.Action.CursorLeft(n)    => moveLeft(n)
