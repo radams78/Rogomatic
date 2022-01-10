@@ -138,28 +138,8 @@ object Terminal {
       Some(Terminal.Action.CursorRight(currentParameter.max(1)), tail)
     case Some('D', tail) =>
       Some(Terminal.Action.CursorLeft(currentParameter.max(1)), tail)
-    case Some(c, tail) if c == 'H' || c == 'f' => {
-      parameters.length match {
-        case 0 =>
-          if currentParameter == 0 then
-            Some(Terminal.Action.MoveCursor(1, 1), tail)
-          else
-            Some(
-              Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'),
-              tail
-            )
-        case 1 => {
-          val x = currentParameter.max(1)
-          val y = parameters(0).max(1)
-          Some(Terminal.Action.MoveCursor(x, y), tail)
-        }
-        case n =>
-          Some(
-            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'H'),
-            tail
-          )
-      }
-    }
+    case Some(c, tail) if c == 'H' || c == 'f' => 
+      Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ 'H'), tail)
     case Some('J', tail) => {
       if (parameters.isEmpty) then
         currentParameter match {
@@ -212,6 +192,23 @@ object Terminal {
       )
     case None => None
   }
+
+  def hvp(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action= {
+      parameters.length match {
+        case 1 =>
+          if parameters.last == 0 then
+            Terminal.Action.MoveCursor(1, 1)
+          else
+            Terminal.Action.UnrecognizedSequence(sequence)
+        case 2 => {
+          val x = parameters.last.max(1)
+          val y = parameters(0).max(1)
+          Terminal.Action.MoveCursor(x, y)
+        }
+        case n =>
+          Terminal.Action.UnrecognizedSequence(sequence)
+      }
+    }
 
   enum Action {
     case Backspace
