@@ -33,9 +33,9 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
       screen.printChar(cursor.x, cursor.y, c)
       cursor = cursor.right()
     case Terminal.Action.CursorUp(n)      => cursor = cursor.up(n)
-    case Terminal.Action.CursorDown(n)    => moveDown(n)
-    case Terminal.Action.CursorRight(n)   => moveRight(n)
-    case Terminal.Action.CursorLeft(n)    => moveLeft(n)
+    case Terminal.Action.CursorDown(n)    => cursor = cursor.down(n)
+    case Terminal.Action.CursorRight(n)   => cursor = cursor.right(n)
+    case Terminal.Action.CursorLeft(n)    => cursor = cursor.left(n)
     case Terminal.Action.MoveCursor(x, y) => moveTo(x, y)
     case Terminal.Action.EraseToEndOfScreen =>
       screen.eraseToEndOfScreen(cursor.x, cursor.y)
@@ -60,22 +60,6 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
   do {
     performAction(action)
     inputBuffer = tail
-  }
-
-  private def moveUp(n: Int = 1): Unit = {
-    cursor = cursor.up(n)
-  }
-
-  private def moveDown(n: Int = 1): Unit = {
-    cursor = cursor.down(n)
-  }
-
-  private def moveRight(n: Int = 1): Unit = {
-    cursor = cursor.right(n)
-  }
-
-  private def moveLeft(n: Int = 1): Unit = {
-    cursor = cursor.left(n)
   }
 
   // Ignores invalid positions
@@ -104,24 +88,24 @@ object Terminal {
 
   private def processInputBuffer(
       inputBuffer: Queue[Char]
-  ): Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
-    case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
-    case (Terminal.LF | Terminal.VT | Terminal.FF, tail) =>
-      Some(Terminal.Action.Linefeed, tail)
-    case (Terminal.CR, tail)  => Some(Terminal.Action.CarriageReturn, tail)
-    case (Terminal.ESC, tail) => Terminal.parseSequenceAfterEscape(tail)
+  ): Option[(Action, Queue[Char])] = inputBuffer.dequeue match {
+    case (BS, tail) => Some(Action.Backspace, tail)
+    case (LF | VT | FF, tail) =>
+      Some(Action.Linefeed, tail)
+    case (CR, tail)  => Some(Action.CarriageReturn, tail)
+    case (ESC, tail) => parseSequenceAfterEscape(tail)
     case (c, tail) if !c.isControl =>
-      Some(Terminal.Action.PrintCharacter(c), tail)
-    case (c, tail) => Some(Terminal.Action.UnrecognizedSequence(Seq(c)), tail)
+      Some(Action.PrintCharacter(c), tail)
+    case (c, tail) => Some(Action.UnrecognizedSequence(Seq(c)), tail)
   }
 
   private def parseSequenceAfterEscape(
       tail: Queue[Char]
-  ): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match
+  ): Option[(Action, Queue[Char])] = tail.dequeueOption match
     case Some('[', tail) =>
-      Terminal.parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+      parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
     case Some(c, tail) =>
-      Some(Terminal.Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
+      Some(Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
     case None => None
 
   private def parseSequenceAfterCSI(
@@ -129,15 +113,15 @@ object Terminal {
       sequence: Seq[Char],
       parameters: Seq[Int],
       currentParameter: Int
-  ): Option[(Terminal.Action, Queue[Char])] = tail.dequeueOption match {
+  ): Option[(Action, Queue[Char])] = tail.dequeueOption match {
     case Some('A', tail) =>
-      Some(Terminal.Action.CursorUp(currentParameter.max(1)), tail)
+      Some(Action.CursorUp(currentParameter.max(1)), tail)
     case Some('B', tail) =>
-      Some(Terminal.Action.CursorDown(currentParameter.max(1)), tail)
+      Some(Action.CursorDown(currentParameter.max(1)), tail)
     case Some('C', tail) =>
-      Some(Terminal.Action.CursorRight(currentParameter.max(1)), tail)
+      Some(Action.CursorRight(currentParameter.max(1)), tail)
     case Some('D', tail) =>
-      Some(Terminal.Action.CursorLeft(currentParameter.max(1)), tail)
+      Some(Action.CursorLeft(currentParameter.max(1)), tail)
     case Some(c, tail) if c == 'H' || c == 'f' => 
       Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ c), tail)
     case Some('J', tail) => Some(ep(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
@@ -158,48 +142,48 @@ object Terminal {
       )
     case Some(c, tail) =>
       Some(
-        Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'),
+        Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'),
         tail
       )
     case None => None
   }
 
-  private def hvp(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action= {
+  private def hvp(parameters : Seq[Int], sequence : Seq[Char]) : Action= {
       parameters.length match {
         case 1 =>
           if parameters.last == 0 then
-            Terminal.Action.MoveCursor(1, 1)
+            Action.MoveCursor(1, 1)
           else
-            Terminal.Action.UnrecognizedSequence(sequence)
+            Action.UnrecognizedSequence(sequence)
         case 2 => {
           val x = parameters.last.max(1)
           val y = parameters(0).max(1)
-          Terminal.Action.MoveCursor(x, y)
+          Action.MoveCursor(x, y)
         }
         case n =>
-          Terminal.Action.UnrecognizedSequence(sequence)
+          Action.UnrecognizedSequence(sequence)
       }
     }
 
-  private def ep(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action = {
+  private def ep(parameters : Seq[Int], sequence : Seq[Char]) : Action = {
       if (parameters.length == 1) then
         parameters.head match {
-          case 0 => Terminal.Action.EraseToEndOfScreen
-          case 1 => Terminal.Action.EraseFromStartOfScreen
-          case 2 => Terminal.Action.EraseScreen
-          case n => Terminal.Action.UnrecognizedSequence(sequence)
+          case 0 => Action.EraseToEndOfScreen
+          case 1 => Action.EraseFromStartOfScreen
+          case 2 => Action.EraseScreen
+          case n => Action.UnrecognizedSequence(sequence)
         }
-      else Terminal.Action.UnrecognizedSequence(sequence)
+      else Action.UnrecognizedSequence(sequence)
     }
 
-  private def el(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action = {
+  private def el(parameters : Seq[Int], sequence : Seq[Char]) : Action = {
     if parameters.length == 1 then
       parameters.head match {
-        case 0 => Terminal.Action.EraseToEndOfLine
-        case 1 => Terminal.Action.EraseFromStartOfLine
-        case 2 => Terminal.Action.EraseLine
-        case n => Terminal.Action.UnrecognizedSequence(sequence)
-      } else Terminal.Action.UnrecognizedSequence(sequence)
+        case 0 => Action.EraseToEndOfLine
+        case 1 => Action.EraseFromStartOfLine
+        case 2 => Action.EraseLine
+        case n => Action.UnrecognizedSequence(sequence)
+      } else Action.UnrecognizedSequence(sequence)
   }
 
   enum Action {
