@@ -102,7 +102,7 @@ object Terminal {
   private val CR = '\u000d'
   private val ESC = '\u001b'
 
-    private def processInputBuffer(
+  private def processInputBuffer(
       inputBuffer: Queue[Char]
   ): Option[(Terminal.Action, Queue[Char])] = inputBuffer.dequeue match {
     case (Terminal.BS, tail) => Some(Terminal.Action.Backspace, tail)
