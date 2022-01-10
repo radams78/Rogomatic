@@ -304,4 +304,17 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
       ++ Seq.fill(14)("abcdefghijklmnopqrstuvwxyz".padTo(80,' '))
     )
   }
+
+  it should "when given an HVP sequence, move the cursor to the specified position" in {
+    val terminal = Terminal(23, 14)
+    terminal.receiveChar('\u001b')
+    terminal.receiveChar('[')
+    terminal.receiveChar('7')
+    terminal.receiveChar(';')
+    terminal.receiveChar('1')
+    terminal.receiveChar('6')
+    terminal.receiveChar('f')
+    terminal.getCursorX() should be(16)
+    terminal.getCursorY() should be(7)
+  }
 }

@@ -138,7 +138,7 @@ object Terminal {
       Some(Terminal.Action.CursorRight(currentParameter.max(1)), tail)
     case Some('D', tail) =>
       Some(Terminal.Action.CursorLeft(currentParameter.max(1)), tail)
-    case Some('H', tail) => {
+    case Some(c, tail) if c == 'H' || c == 'f' => {
       parameters.length match {
         case 0 =>
           if currentParameter == 0 then
