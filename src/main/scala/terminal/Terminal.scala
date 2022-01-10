@@ -141,18 +141,7 @@ object Terminal {
     case Some(c, tail) if c == 'H' || c == 'f' => 
       Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ c), tail)
     case Some('J', tail) => Some(ep(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
-    case Some('K', tail) =>
-      currentParameter match {
-        case 0 => Some(Terminal.Action.EraseToEndOfLine, tail)
-        case 1 => Some(Terminal.Action.EraseFromStartOfLine, tail)
-        case 2 => Some(Terminal.Action.EraseLine, tail)
-        case n => {
-          Some(
-            Terminal.Action.UnrecognizedSequence('\u001b' +: sequence :+ 'K'),
-            tail
-          )
-        }
-      }
+    case Some('K', tail) => Some(el(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
     case Some(';', tail) =>
       parseSequenceAfterCSI(
         tail,
@@ -202,6 +191,16 @@ object Terminal {
         }
       else Terminal.Action.UnrecognizedSequence(sequence)
     }
+
+  private def el(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action = {
+    if parameters.length == 1 then
+      parameters.head match {
+        case 0 => Terminal.Action.EraseToEndOfLine
+        case 1 => Terminal.Action.EraseFromStartOfLine
+        case 2 => Terminal.Action.EraseLine
+        case n => Terminal.Action.UnrecognizedSequence(sequence)
+      } else Terminal.Action.UnrecognizedSequence(sequence)
+  }
 
   enum Action {
     case Backspace
