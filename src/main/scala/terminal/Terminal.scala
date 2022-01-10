@@ -193,7 +193,7 @@ object Terminal {
     case None => None
   }
 
-  def hvp(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action= {
+  private def hvp(parameters : Seq[Int], sequence : Seq[Char]) : Terminal.Action= {
       parameters.length match {
         case 1 =>
           if parameters.last == 0 then
