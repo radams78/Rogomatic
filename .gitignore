@@ -6,3 +6,5 @@ project/*
 .metals/*
 target
 target/*
+.bloop
+.bloop/*

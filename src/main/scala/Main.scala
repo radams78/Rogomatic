@@ -1,5 +1,12 @@
-@main def hello: Unit = 
-  println("Hello world!")
-  println(msg)
+import com.pty4j.PtyProcess
+import com.pty4j.PtyProcessBuilder
+import collection.convert.ImplicitConversionsToJava._
 
-def msg = "I was compiled by Scala 3. :)"
+import terminal.Terminal
+import scala.concurrent.Future
+import concurrent.ExecutionContext.Implicits.global
+
+@main def rgm : Unit = {
+  val rogue = Rogue()
+  println(rogue.getScreen().mkString("\n"))
+}
