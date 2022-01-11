@@ -8,5 +8,6 @@ import concurrent.ExecutionContext.Implicits.global
 
 @main def rgm : Unit = {
   val rogue = Rogue()
-  println(rogue.getScreen().mkString("\n"))
+  val user = User()
+  val player = TransparentPlayer(user, rogue)
 }
