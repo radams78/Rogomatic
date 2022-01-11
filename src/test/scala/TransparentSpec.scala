@@ -32,13 +32,13 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers :
                   .map(_.padTo(80,' '))
 
         object MockRogue extends IRogue {
-            override def getScreen() : Array[String] = firstScreen
+            override def getScreen() : Seq[String] = firstScreen
         }
 
         object MockUser extends IUser {
             var seenScreen = false
 
-            override def displayScreen(screen : Array[String]) = {
+            override def displayScreen(screen : Seq[String]) = {
                 screen should contain theSameElementsInOrderAs (firstScreen)
                 seenScreen = true
             }

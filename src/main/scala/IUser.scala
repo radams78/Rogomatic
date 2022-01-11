@@ -1,3 +1,3 @@
 trait IUser {
-  def displayScreen(screen : Array[String]) : Unit
+  def displayScreen(screen : Seq[String]) : Unit
 }
