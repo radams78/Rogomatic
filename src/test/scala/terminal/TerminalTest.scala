@@ -2,6 +2,7 @@ package terminal
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
+import jtermios.freebsd.JTermiosImpl.FreeBSD_C_lib.termios
 
 class TerminalTest extends AnyFlatSpec with should.Matchers {
   "A VT100 display" should "have a blank screen when first turned on" in {
@@ -316,5 +317,17 @@ class TerminalTest extends AnyFlatSpec with should.Matchers {
     terminal.receiveChar('f')
     terminal.getCursorX() should be(16)
     terminal.getCursorY() should be(7)
+  }
+
+  it should "ignore a USASCII sequence" in {
+    val terminal = Terminal()
+    terminal.receiveChar('\u001b')
+    terminal.receiveChar('(')
+    terminal.receiveChar('B')
+    terminal.getScreen() should contain theSameElementsInOrderAs Seq.fill(24)(
+      " " * 80
+    )
+    terminal.getCursorX() should be(1)
+    terminal.getCursorY() should be(1)
   }
 }

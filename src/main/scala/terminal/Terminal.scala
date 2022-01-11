@@ -49,10 +49,12 @@ class Terminal(x: Int = 1, y: Int = 1, initialScreenContents: String = "") {
     case Terminal.Action.EraseLine => screen.eraseLine(cursor.y)
     case Terminal.Action.UnrecognizedSequence(seq) => {
       // DEBUG
+      throw new Error("Unrecognized charater sequence: " + seq.map(_.toInt.toHexString))
       println("Unrecognized character sequence:")
       println(seq.mkString)
       println(seq.map(_.toInt))
     }
+    case Terminal.Action.NoAction => ()
   }
 
   private def processInputBuffer(): Unit = for
@@ -94,6 +96,7 @@ object Terminal {
       Some(Action.Linefeed, tail)
     case (CR, tail)  => Some(Action.CarriageReturn, tail)
     case (ESC, tail) => parseSequenceAfterEscape(tail)
+    case ('\u000f', tail) => Some(Action.NoAction, tail)
     case (c, tail) if !c.isControl =>
       Some(Action.PrintCharacter(c), tail)
     case (c, tail) => Some(Action.UnrecognizedSequence(Seq(c)), tail)
@@ -104,9 +107,16 @@ object Terminal {
   ): Option[(Action, Queue[Char])] = tail.dequeueOption match
     case Some('[', tail) =>
       parseSequenceAfterCSI(tail, Seq('['), Seq(), 0)
+    case Some(c, tail) if c == '(' || c == ')' => parseCharacterSetSequence(tail)
     case Some(c, tail) =>
       Some(Action.UnrecognizedSequence(Seq('\u001b', c)), tail)
     case None => None
+
+  private def parseCharacterSetSequence(tail : Queue[Char]) : Option[(Action, Queue[Char])] = tail.dequeueOption match {
+    case None => None
+    case Some(c, tail) if c == 'A' || c == 'B' || c == '0' || c == '1' || c == '2' => Some(Action.NoAction, tail)
+    case Some(c, tail) => Some(Action.UnrecognizedSequence(Seq('\u001b', '(', c)), tail)
+  }
 
   private def parseSequenceAfterCSI(
       tail: Queue[Char],
@@ -126,6 +136,9 @@ object Terminal {
       Some(hvp(parameters :+ currentParameter, '\u001b' +: sequence :+ c), tail)
     case Some('J', tail) => Some(ep(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
     case Some('K', tail) => Some(el(parameters :+ currentParameter, '\u001b' +: sequence :+ 'J'), tail)
+    case Some('r', tail) => Some(Action.NoAction, tail)
+    case Some('m', tail) => Some(Action.NoAction, tail)
+    case Some('?', tail) => parseModeChangeSequence(tail, sequence :+ '?', 0)
     case Some(';', tail) =>
       parseSequenceAfterCSI(
         tail,
@@ -141,10 +154,20 @@ object Terminal {
         10 * currentParameter + n.asDigit
       )
     case Some(c, tail) =>
+      println("UHOH!!!! " + c)
+      println(c.toInt.toHexString)
       Some(
-        Action.UnrecognizedSequence('\u001b' +: sequence :+ 'c'),
+        Action.UnrecognizedSequence('\u001b' +: sequence :+ c),
         tail
       )
+    case None => None
+  }
+
+  private def parseModeChangeSequence(tail : Queue[Char], sequence : Seq[Char], parameter : Int) : Option[(Action, Queue[Char])] = tail.dequeueOption match {
+    case Some('h', tail) => Some(Action.NoAction, tail)
+    case Some(n, tail) if n.isDigit =>
+      parseModeChangeSequence(tail, sequence :+ n, 10 * parameter + n.asDigit)
+    case Some(c, tail) => Some(Action.UnrecognizedSequence(sequence :+ c), tail)
     case None => None
   }
 
@@ -203,5 +226,6 @@ object Terminal {
     case EraseFromStartOfLine
     case EraseLine
     case UnrecognizedSequence(seq: Seq[Char])
+    case NoAction
   }
 }
