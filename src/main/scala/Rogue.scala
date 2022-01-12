@@ -24,6 +24,8 @@ class Rogue extends IRogue {
   Thread.sleep(1000)
 
   override def getScreen(): Seq[String] = terminal.getScreen()
+
+  override def sendKeypress(keypress : Char) : Unit = os.write(keypress.toInt)
 }
 
 private object Rogue {

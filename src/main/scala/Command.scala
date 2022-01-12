@@ -1,0 +1,2 @@
+enum Command:
+    case Quit
