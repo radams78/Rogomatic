@@ -1,0 +1,1 @@
+final case class Arrow(quantity : Int, toHit : Int, toDamage : Int) extends Item

@@ -1,0 +1,1 @@
+final case class Food(quantity : Int) extends Item

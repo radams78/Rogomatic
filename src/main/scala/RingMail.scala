@@ -1,0 +1,1 @@
+final case class RingMail(bonus : Int) extends Item
