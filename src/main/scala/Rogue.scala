@@ -17,15 +17,23 @@ class Rogue extends IRogue {
 
   private val terminal = Terminal()
   Future {
-    while (true) {
+    while true do {
       terminal.receiveChar(is.read.toChar)
     }
   }
   Thread.sleep(1000)
 
-  override def getScreen(): Seq[String] = terminal.getScreen()
+  override def getScreen(): Seq[String] =
+    terminal.getScreen()
 
-  override def sendKeypress(keypress : Char) : Unit = os.write(keypress.toInt)
+  override def sendKeypress(keypress : Char) : Unit = {
+    os.write(keypress.toInt)
+    while {
+      val oldScreen = terminal.getScreen()
+      Thread.sleep(50)
+      oldScreen != terminal.getScreen()
+    } do ()
+  }
 }
 
 private object Rogue {
