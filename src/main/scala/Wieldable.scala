@@ -1,0 +1,1 @@
+trait Wieldable extends Item

@@ -196,11 +196,11 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers:
 
       override def displayInventory(inventory : Inventory) : Unit = {
         inventory should be (Inventory(Map(
-          Slot('a') -> Food(1),
-          Slot('b') -> RingMail(+1),
-          Slot('c') -> Mace(+1,+1),
-          Slot('d') -> ShortBow(+1,+0),
-          Slot('e') -> Arrow(31, +0, +0)
+          Slot('a') -> Food.Rations(1),
+          Slot('b') -> Armor(ArmorType.RINGMAIL, +1),
+          Slot('c') -> Weapon(MeleeType.MACE, +1,+1),
+          Slot('d') -> Weapon(ThrowerType.SHORTBOW, +1,+0),
+          Slot('e') -> Weapon(31, MissileType.ARROW, +0, +0)
         )))
         seenInventory = true
       }

@@ -1,1 +1,5 @@
-final case class Food(quantity : Int) extends Item
+enum Food extends Item {
+    case Rations(quantity : Int)
+
+    case SlimeMold
+}
