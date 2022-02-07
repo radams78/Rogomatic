@@ -10,23 +10,9 @@ enum ThrowerType extends WeaponType {
   case SHORTBOW
 }
 
-enum MissileType extends WeaponType {
-  case DART
-  case ARROW
-  case DAGGER
-  case SHURIKEN
-
-  def singular : String = this match {
-    case DART => "dart"
-    case ARROW => "arrow"
-    case DAGGER => "dagger"
-    case SHURIKEN => "shuriken"
-  }
-
-  def plural : String = this match {
-    case DART => "darts"
-    case ARROW => "arrows"
-    case DAGGER => "daggers"
-    case SHURIKEN => "shuriken"
-  }
+enum MissileType(val singular: String, val plural: String) extends WeaponType {
+  case DART extends MissileType("dart", "darts")
+  case ARROW extends MissileType("arrow", "arrows")
+  case DAGGER extends MissileType("dagger", "daggers")
+  case SHURIKEN extends MissileType("shuriken", "shuriken")
 }
