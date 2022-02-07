@@ -2,6 +2,13 @@ enum Weapon extends Wieldable {
   case Melee(meleeType: MeleeType, bonuses: Weapon.Bonuses)
   case Thrower(throwerType: ThrowerType, bonuses: Weapon.Bonuses)
   case Missile(quantity: Int, missileType: MissileType, bonuses: Weapon.Bonuses)
+
+  override def toString : String = this match {
+      case Melee(meleeType, bonuses) => s"a $bonuses $meleeType"
+      case Thrower(throwerType, bonuses) => s"a $bonuses $throwerType"
+      case Missile(quantity, missileType, bonuses) => 
+          s"$quantity $bonuses ${if (quantity > 1) missileType.plural else missileType.singular}"
+  }
 }
 
 object Weapon {

@@ -15,4 +15,18 @@ enum MissileType extends WeaponType {
   case ARROW
   case DAGGER
   case SHURIKEN
+
+  def singular : String = this match {
+    case DART => "dart"
+    case ARROW => "arrow"
+    case DAGGER => "dagger"
+    case SHURIKEN => "shuriken"
+  }
+
+  def plural : String = this match {
+    case DART => "darts"
+    case ARROW => "arrows"
+    case DAGGER => "daggers"
+    case SHURIKEN => "shuriken"
+  }
 }
