@@ -1,28 +1,25 @@
-enum Weapon extends Wieldable {
-  case Melee(meleeType: MeleeType, bonuses: Weapon.Bonuses)
-  case Thrower(throwerType: ThrowerType, bonuses: Weapon.Bonuses)
-  case Missile(quantity: Int, missileType: MissileType, bonuses: Weapon.Bonuses)
-
-  override def toString : String = this match {
-      case Melee(meleeType, bonuses) => s"a $bonuses $meleeType"
-      case Thrower(throwerType, bonuses) => s"a $bonuses $throwerType"
-      case Missile(quantity, missileType, bonuses) => 
-          s"$quantity $bonuses ${if (quantity > 1) missileType.plural else missileType.singular}"
-  }
-}
+trait Weapon extends Wieldable
 
 object Weapon {
+  case class Melee(meleeType: MeleeType, bonuses: Weapon.Bonuses) extends Weapon {
+    override def toString = s"a $bonuses $meleeType"
+  }
+
+  case class Thrower(throwerType: ThrowerType, bonuses: Weapon.Bonuses) extends Weapon {
+    override def toString = s"a $bonuses $throwerType"
+  }
+
+  case class Missile(quantity: Int, missileType: MissileType, bonuses: Weapon.Bonuses) extends Weapon {
+    override def toString = s"$quantity $bonuses " +
+      s"${if (quantity > 1) missileType.plural else missileType.singular}"
+  }
+
   def apply(
       quantity: Int,
       missileType: MissileType,
       plusToHit: Bonus,
       plusDamage: Bonus
-  ): Weapon =
-    new Missile(
-      quantity,
-      missileType,
-      Bonuses.Identified(plusToHit, plusDamage)
-    )
+  ): Weapon = Missile(quantity, missileType, Bonuses.Identified(plusToHit, plusDamage))
 
   def apply(
       quantity: Int,
@@ -62,5 +59,4 @@ object Weapon {
     case Unidentified
     case Identified(plusToHit: Bonus, plusDamage: Bonus)
   }
-
 }
