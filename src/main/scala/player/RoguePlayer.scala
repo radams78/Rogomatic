@@ -5,6 +5,7 @@ import gamedata.inventory.Slot
 import gamedata.inventory.item.Item
 import player.TransparentPlayer
 import gamedata.inventory.Inventory
+import gamedata.Command
 
 class RoguePlayer(rogue : IRogue) {
     private val screen = rogue.getScreen()
@@ -20,4 +21,6 @@ class RoguePlayer(rogue : IRogue) {
     def getScreen() = screen
 
     def getInventory() = inventory
+
+    def performCommand(command: Command) = for (k <- command.keypresses) rogue.sendKeypress(k)
 }

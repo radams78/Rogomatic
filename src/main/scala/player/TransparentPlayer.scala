@@ -34,7 +34,7 @@ class TransparentPlayer(user : IUser, rogue : IRogue) {
   private val expert = new TransparentExpert(user)
 
   private val command = expert.getCommand(player.getScreen(), player.getInventory())
-  for (k <- command.keypresses) rogue.sendKeypress(k)
+  player.performCommand(command)
 }
 
 object TransparentPlayer extends RegexParsers {
