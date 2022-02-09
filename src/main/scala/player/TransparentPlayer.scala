@@ -30,25 +30,15 @@ import gamedata.inventory.item.Wieldable
 import rogue.IRogue
 
 class TransparentPlayer(user : IUser, rogue : IRogue) {
-  private val player : RoguePlayer = new RoguePlayer()
+  private val player : RoguePlayer = new RoguePlayer(rogue)
+  private val expert = new TransparentExpert(user)
 
-  user.displayScreen(rogue.getScreen())
-  rogue.sendKeypress('i')
-  var itemsMap = Map[Slot,Item]()
-  for (line <- rogue.getScreen().takeWhile(s => ! s.contains("--press space to continue--"))) do {
-    val inventoryLine = TransparentPlayer.parseInventoryLine(line)
-    itemsMap = itemsMap.updated(inventoryLine.slot, inventoryLine.item)
-  }
-  val inventory = Inventory(itemsMap)
-  rogue.sendKeypress(' ')
-  user.displayInventory(inventory)
-  for (k <- Command.keypresses(user.getCommand())) {
-      rogue.sendKeypress(k)
-  }
+  private val command = expert.getCommand(player.getScreen(), player.getInventory())
+  for (k <- command.keypresses) rogue.sendKeypress(k)
 }
 
 object TransparentPlayer extends RegexParsers {
-  private def parseInventoryLine(line : String): InventoryScreenLine =
+  def parseInventoryLine(line : String): InventoryScreenLine =
     parseAll(inventoryLine, line) match {
       case Success(result, _) => result
       case failure : NoSuccess => throw new java.lang.Error(failure.msg)
