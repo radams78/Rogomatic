@@ -1,3 +1,3 @@
-class Item {
-  
-}
+package gamedata.inventory.item
+
+trait Item

@@ -1,3 +1,5 @@
+package gamedata
+
 enum TrapType {
   case Teleport
   case Bear

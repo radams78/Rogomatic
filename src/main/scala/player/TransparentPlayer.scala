@@ -1,19 +1,50 @@
+package player
+
 import scala.util.parsing.combinator.RegexParsers
+import gamedata.Bolt
+import gamedata.Command
+import gamedata.Event
+import gamedata.Hunger
+import gamedata.MonsterType
+import gamedata.TrapType
+import gamedata.inventory.Inventory
+import gamedata.inventory.Slot
+import gamedata.inventory.item.Armor
+import gamedata.inventory.item.ArmorType
+import gamedata.inventory.item.Bonus
+import gamedata.inventory.item.Colour
+import gamedata.inventory.item.Item
+import gamedata.inventory.item.Food
+import gamedata.inventory.item.Material
+import gamedata.inventory.item.MeleeType
+import gamedata.inventory.item.MissileType
+import gamedata.inventory.item.Potion
+import gamedata.inventory.item.PotionPower
+import gamedata.inventory.item.Scroll
+import gamedata.inventory.item.ScrollPower
+import gamedata.inventory.item.ThrowerType
+import gamedata.inventory.item.Wand
+import gamedata.inventory.item.Weapon
+import gamedata.inventory.item.WeaponType
+import gamedata.inventory.item.Wieldable
+import rogue.IRogue
 
 class TransparentPlayer(user : IUser, rogue : IRogue) {
-    user.displayScreen(rogue.getScreen())
-    rogue.sendKeypress('i')
-    var itemsMap = Map[Slot,Item]()
-    for (line <- rogue.getScreen().takeWhile(s => ! s.contains("--press space to continue--"))) do {
-      val inventoryLine = TransparentPlayer.parseInventoryLine(line)
-      itemsMap = itemsMap.updated(inventoryLine.slot, inventoryLine.item)
-    }
-    val inventory = Inventory(itemsMap)
-    rogue.sendKeypress(' ')
-    user.displayInventory(inventory)
-    for (k <- Command.keypresses(user.getCommand())) {
-        rogue.sendKeypress(k)
-    }
+  private val player : RoguePlayer = new RoguePlayer()
+
+  user.displayScreen(rogue.getScreen())
+  rogue.sendKeypress('i')
+  var itemsMap = Map[Slot,Item]()
+  for (line <- rogue.getScreen().takeWhile(s => ! s.contains("--press space to continue--"))) do {
+    val inventoryLine = TransparentPlayer.parseInventoryLine(line)
+    itemsMap = itemsMap.updated(inventoryLine.slot, inventoryLine.item)
+  }
+  val inventory = Inventory(itemsMap)
+  rogue.sendKeypress(' ')
+  user.displayInventory(inventory)
+  for (k <- Command.keypresses(user.getCommand())) {
+      rogue.sendKeypress(k)
+  }
 }
 
 object TransparentPlayer extends RegexParsers {

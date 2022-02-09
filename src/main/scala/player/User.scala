@@ -1,5 +1,10 @@
+package player
+
 import scala.io.StdIn
 import scala.annotation.tailrec
+
+import gamedata.Command
+import gamedata.inventory.Inventory
 
 // Humble object
 class User extends IUser {

@@ -1,3 +1,5 @@
+package gamedata
+
 enum Command {
     case Quit
 }

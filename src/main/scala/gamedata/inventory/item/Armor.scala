@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 case class Armor(armorType : ArmorType, bonus : Bonus) extends Item
 
 object Armor{

@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 enum ScrollPower {
   case HoldMonster
   case RemoveCurse

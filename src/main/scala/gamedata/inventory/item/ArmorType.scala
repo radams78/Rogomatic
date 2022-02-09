@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 enum ArmorType {
   case LEATHER
   case RINGMAIL

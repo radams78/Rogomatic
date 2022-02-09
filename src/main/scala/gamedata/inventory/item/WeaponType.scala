@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 trait WeaponType
 
 enum MeleeType extends WeaponType {

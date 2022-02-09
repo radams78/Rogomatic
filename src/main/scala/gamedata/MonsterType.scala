@@ -1,3 +1,5 @@
+package gamedata
+
 enum MonsterType {
   case Aquator
   case Bat

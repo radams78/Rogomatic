@@ -6,8 +6,12 @@ import terminal.Terminal
 import scala.concurrent.Future
 import concurrent.ExecutionContext.Implicits.global
 
+import player.TransparentPlayer
+import player.User
+import rogue.Rogue
+
 @main def rgm : Unit = {
-  val rogue = Rogue()
-  val user = User()
+  val rogue = new Rogue()
+  val user = new User()
   val player = TransparentPlayer(user, rogue)
 }

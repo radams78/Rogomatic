@@ -1,3 +1,14 @@
+package gamedata
+
+import inventory.Slot
+import inventory.item.Armor
+import inventory.item.ArmorType
+import inventory.item.Item
+import inventory.item.PotionPower
+import inventory.item.ScrollPower
+import inventory.item.Weapon
+import inventory.item.WeaponType
+
 enum Event {
   case WasWearing(armorType: ArmorType)
   case PickedUp(item: Item, slot: Slot)

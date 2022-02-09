@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 enum Colour {
   case BLUE
   case RED

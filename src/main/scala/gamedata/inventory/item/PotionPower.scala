@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 enum PotionPower {
   case Blindness
   case SeeInvisible

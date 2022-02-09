@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 trait Weapon extends Wieldable
 
 object Weapon {

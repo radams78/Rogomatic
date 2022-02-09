@@ -1,3 +1,5 @@
+package gamedata.inventory.item
+
 enum Material {
   case STEEL
   case BRONZE

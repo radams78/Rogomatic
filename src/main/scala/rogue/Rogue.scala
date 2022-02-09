@@ -1,3 +1,5 @@
+package rogue
+
 import collection.convert.ImplicitConversionsToJava._
 import scala.concurrent.Future
 import concurrent.ExecutionContext.Implicits.global
