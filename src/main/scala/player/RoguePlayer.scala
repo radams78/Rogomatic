@@ -26,6 +26,8 @@ class RoguePlayer(rogue: IRogue) {
   }
 
   private def summonInventoryScreen() = rogue.sendKeypress('i')
+
+  private def dismissInventoryScreen() = rogue.sendKeypress(' ')
 }
 
 object RoguePlayer {
