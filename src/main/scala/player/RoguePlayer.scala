@@ -10,7 +10,6 @@ import gamedata.Command
 class RoguePlayer(rogue: IRogue) {
   private val screen = rogue.getScreen()
   rogue.sendKeypress('i')
-  var itemsMap = Map[Slot, Item]()
   val inventory = Inventory(
     (for (
       line <- rogue
