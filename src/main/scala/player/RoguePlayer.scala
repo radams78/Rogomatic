@@ -19,11 +19,13 @@ class RoguePlayer(rogue: IRogue) {
     rogue.sendKeypress(k)
 
   private def readInventoryScreen() : Inventory = {
-    rogue.sendKeypress('i')
+    summonInventoryScreen()
     val inventory = RoguePlayer.parseInventoryScreen(rogue.getScreen())
     rogue.sendKeypress(' ')
     return inventory
   }
+
+  private def summonInventoryScreen() = rogue.sendKeypress('i')
 }
 
 object RoguePlayer {
