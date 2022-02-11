@@ -1,7 +1,6 @@
 package player
 
 import rogue.IRogue
-import gamedata.inventory.Slot
 import gamedata.inventory.item.Item
 import player.TransparentPlayer
 import gamedata.inventory.Inventory
