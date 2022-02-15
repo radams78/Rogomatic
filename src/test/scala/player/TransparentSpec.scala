@@ -14,6 +14,7 @@ import gamedata.inventory.item.MissileType
 import gamedata.inventory.item.ThrowerType
 import gamedata.inventory.item.Weapon
 import rogue.IRogue
+import player.Rogomatic
 
 class TransparentSpec extends AnyFlatSpec with should.Matchers:
   "A transparent game player" should "pass on a quit command to Rogue" in {
@@ -225,8 +226,8 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers:
       }
     }
 
-    val transparentPlayer = TransparentPlayer(MockUser, MockRogue)
-    transparentPlayer.playTurn()
+    val transparentRogomatic = Rogomatic.makeTransparent(MockRogue, MockUser)
+    transparentRogomatic.performNextCommand()
     MockUser.seenScreen should be (true)
     MockUser.seenInventory should be (true)
     MockRogue.state should be (6)

@@ -30,6 +30,15 @@ import gamedata.inventory.item.Wieldable
 import rogue.IRogue
 
 object Parser extends RegexParsers {
+  def parseInventoryScreen(screen: Seq[String]) = Inventory(
+    (for (
+      line <- screen.takeWhile(s => !s.contains("--press space to continue--"));
+      inventoryLine = parseInventoryLine(line)
+    ) yield {
+      inventoryLine.slot -> inventoryLine.item
+    }).toMap
+  )
+
   def parseInventoryLine(line: String): InventoryScreenLine =
     parseAll(inventoryLine, line) match {
       case Success(result, _) => result
