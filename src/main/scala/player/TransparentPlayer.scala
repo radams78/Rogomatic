@@ -4,7 +4,7 @@ import rogue.IRogue
 
 // TODO Keep the game going after one turn
 class TransparentPlayer(mediator : Mediator) {
-  mediator.performNextCommand()
+  def playTurn() : Unit = mediator.performNextCommand()
 }
 
 object TransparentPlayer {

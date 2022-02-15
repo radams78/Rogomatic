@@ -226,6 +226,7 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers:
     }
 
     val transparentPlayer = TransparentPlayer(MockUser, MockRogue)
+    transparentPlayer.playTurn()
     MockUser.seenScreen should be (true)
     MockUser.seenInventory should be (true)
     MockRogue.state should be (6)
