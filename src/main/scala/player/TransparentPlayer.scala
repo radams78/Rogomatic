@@ -9,5 +9,5 @@ class TransparentPlayer(mediator : Mediator) {
 
 object TransparentPlayer {
   def apply(user : IUser, rogue : IRogue) : TransparentPlayer = 
-    new TransparentPlayer(new Mediator(new RoguePlayer(rogue), new TransparentExpert(user)))
+    new TransparentPlayer(Mediator(rogue, user))
 }
