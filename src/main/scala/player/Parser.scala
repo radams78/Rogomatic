@@ -39,7 +39,7 @@ object Parser extends RegexParsers {
     }).toMap
   )
 
-  def parseInventoryLine(line: String): InventoryScreenLine =
+  private def parseInventoryLine(line: String): InventoryScreenLine =
     parseAll(inventoryLine, line) match {
       case Success(result, _) => result
       case failure: NoSuccess => throw new java.lang.Error(failure.msg)
