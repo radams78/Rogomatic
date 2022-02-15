@@ -20,7 +20,7 @@ class RoguePlayer(rogue: IRogue) {
 
   private def readInventoryScreen(): Inventory = {
     summonInventoryScreen()
-    val inventory = RoguePlayer.parseInventoryScreen(rogue.getScreen())
+    val inventory = Parser.parseInventoryScreen(rogue.getScreen())
     dismissInventoryScreen()
     return inventory
   }
@@ -28,8 +28,4 @@ class RoguePlayer(rogue: IRogue) {
   private def summonInventoryScreen() = rogue.sendKeypress('i')
 
   private def dismissInventoryScreen() = rogue.sendKeypress(' ')
-}
-
-object RoguePlayer {
-  private def parseInventoryScreen(screen: Seq[String]) = Parser.parseInventoryScreen(screen)
 }
