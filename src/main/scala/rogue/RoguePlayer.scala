@@ -4,9 +4,10 @@ import rogue.IRogue
 import gamedata.inventory.item.Item
 import gamedata.inventory.Inventory
 import gamedata.Command
+import rogue.IRoguePlayer
 
 // TODO Read screen and inventory after performing command
-class RoguePlayer(rogue: IRogue) {
+class RoguePlayer(rogue: IRogue) extends IRoguePlayer {
   private val screen = rogue.getScreen()
   private val inventory = readInventoryScreen()
 
