@@ -34,7 +34,7 @@ object RoguePlayer {
     (for (
       line <- screen
         .takeWhile(s => !s.contains("--press space to continue--"));
-      inventoryLine = TransparentPlayer.parseInventoryLine(line)
+      inventoryLine = Parser.parseInventoryLine(line)
     ) yield {
       inventoryLine.slot -> inventoryLine.item
     }).toMap
