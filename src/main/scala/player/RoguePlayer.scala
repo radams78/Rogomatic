@@ -14,13 +14,14 @@ class RoguePlayer(rogue: IRogue) {
 
   def getInventory() = inventory
 
-  def performCommand(command: Command) = for (k <- command.keypresses)
-    rogue.sendKeypress(k)
+  def performCommand(command: Command) = 
+    for (k <- command.keypresses)
+      rogue.sendKeypress(k)
 
-  private def readInventoryScreen() : Inventory = {
+  private def readInventoryScreen(): Inventory = {
     summonInventoryScreen()
     val inventory = RoguePlayer.parseInventoryScreen(rogue.getScreen())
-    rogue.sendKeypress(' ')
+    dismissInventoryScreen()
     return inventory
   }
 
@@ -32,8 +33,7 @@ class RoguePlayer(rogue: IRogue) {
 object RoguePlayer {
   private def parseInventoryScreen(screen: Seq[String]) = Inventory(
     (for (
-      line <- screen
-        .takeWhile(s => !s.contains("--press space to continue--"));
+      line <- screen.takeWhile(s => !s.contains("--press space to continue--"));
       inventoryLine = Parser.parseInventoryLine(line)
     ) yield {
       inventoryLine.slot -> inventoryLine.item
