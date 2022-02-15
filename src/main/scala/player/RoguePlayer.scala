@@ -31,12 +31,5 @@ class RoguePlayer(rogue: IRogue) {
 }
 
 object RoguePlayer {
-  private def parseInventoryScreen(screen: Seq[String]) = Inventory(
-    (for (
-      line <- screen.takeWhile(s => !s.contains("--press space to continue--"));
-      inventoryLine = Parser.parseInventoryLine(line)
-    ) yield {
-      inventoryLine.slot -> inventoryLine.item
-    }).toMap
-  )
+  private def parseInventoryScreen(screen: Seq[String]) = Parser.parseInventoryScreen(screen)
 }
