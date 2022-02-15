@@ -2,6 +2,7 @@ package player
 
 import rogue.IRogue
 import rogue.IRoguePlayer
+import rogue.RoguePlayerFactory
 
 class Rogomatic(val player : IRoguePlayer, val expert : TransparentExpert) {
   def performNextCommand() : Unit = {
@@ -12,5 +13,5 @@ class Rogomatic(val player : IRoguePlayer, val expert : TransparentExpert) {
 
 object Rogomatic {
     def makeTransparent(rogue : IRogue, user : IUser) : Rogomatic =
-        new Rogomatic(new RoguePlayer(rogue), new TransparentExpert(user))
+        new Rogomatic(RoguePlayerFactory.makeRoguePlayer(rogue), new TransparentExpert(user))
 }
