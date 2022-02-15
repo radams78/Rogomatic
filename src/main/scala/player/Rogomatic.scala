@@ -10,6 +10,6 @@ class Rogomatic(val player : RoguePlayer, val expert : TransparentExpert) {
 }
 
 object Rogomatic {
-    def apply(rogue : IRogue, user : IUser) : Rogomatic =
+    def makeTransparent(rogue : IRogue, user : IUser) : Rogomatic =
         new Rogomatic(new RoguePlayer(rogue), new TransparentExpert(user))
 }

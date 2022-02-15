@@ -2,7 +2,6 @@ package player
 
 import rogue.IRogue
 import gamedata.inventory.item.Item
-import player.TransparentPlayer
 import gamedata.inventory.Inventory
 import gamedata.Command
 
