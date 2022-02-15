@@ -1,5 +1,5 @@
 package player
 
-class Mediator {
+class Mediator(val player : RoguePlayer) {
   
 }
