@@ -6,6 +6,7 @@ import player.TransparentPlayer
 import gamedata.inventory.Inventory
 import gamedata.Command
 
+// TODO Read screen and inventory after performing command
 class RoguePlayer(rogue: IRogue) {
   private val screen = rogue.getScreen()
   private val inventory = readInventoryScreen()
