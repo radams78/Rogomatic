@@ -8,4 +8,5 @@ import player.Rogomatic
   val rogue : IRogue = new Rogue()
   val user : IUser = new User()
   val player = Rogomatic.makeTransparent(rogue, user)
+  player.performNextCommand()
 }
