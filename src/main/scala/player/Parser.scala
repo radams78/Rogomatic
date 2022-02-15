@@ -35,6 +35,7 @@ object Parser extends RegexParsers {
       case Success(result, _) => result
       case failure: NoSuccess => throw new java.lang.Error(failure.msg)
     }
+
   private val slot: Parser[Slot] = """[a-v]""".r ^^ { (slot: String) =>
     Slot(slot.charAt(0))
   }
