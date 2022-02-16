@@ -6,7 +6,7 @@ enum Food extends Item {
     case SlimeMold
 
     override def toString : String = this match {
-        case Rations(quantity) => s"$quantity ${if (quantity > 1) "ration" else "rations"}"
+        case Rations(quantity) => s"$quantity ${if (quantity == 1) "ration" else "rations"}"
         case SlimeMold => "a slime-mold"
     }
 }
