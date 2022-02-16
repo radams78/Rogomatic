@@ -1,4 +1,4 @@
-package player
+package expert.transparent
 
 import scala.io.StdIn
 import scala.annotation.tailrec

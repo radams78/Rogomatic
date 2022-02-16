@@ -1,4 +1,4 @@
-package player
+package expert.transparent
 
 import gamedata.Command
 import gamedata.inventory.Inventory

@@ -1,5 +1,3 @@
-package player
-
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -14,7 +12,7 @@ import gamedata.inventory.item.MissileType
 import gamedata.inventory.item.ThrowerType
 import gamedata.inventory.item.Weapon
 import rogue.IRogue
-import player.Rogomatic
+import expert.transparent.IUser
 
 class TransparentSpec extends AnyFlatSpec with should.Matchers:
   "A transparent game player" should "pass on a quit command to Rogue" in {

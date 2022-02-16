@@ -1,9 +1,9 @@
-package player
-
 import rogue.IRogue
 import rogue.IRoguePlayer
 import rogue.RoguePlayerFactory
 import expert.IExpert
+import expert.transparent.IUser
+import expert.transparent.TransparentExpert
 
 class Rogomatic(val player : IRoguePlayer, val expert : IExpert) {
   def performNextCommand() : Unit = {

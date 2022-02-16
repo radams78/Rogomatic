@@ -1,8 +1,7 @@
-import player.IUser
-import player.User
+import expert.transparent.IUser
+import expert.transparent.User
 import rogue.IRogue
 import rogue.Rogue
-import player.Rogomatic
 
 @main def rgm : Unit = {
   val rogue : IRogue = new Rogue()
