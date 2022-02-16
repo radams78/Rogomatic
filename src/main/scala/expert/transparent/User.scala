@@ -7,7 +7,7 @@ import gamedata.Command
 import gamedata.inventory.Inventory
 
 // Humble object
-class User extends IUser {
+private[transparent] class User extends IUser {
   override def displayScreen(screen : Seq[String]) : Unit = println(screen.mkString("\n"))
 
   override def displayInventory(inventory : Inventory) : Unit = println(inventory)

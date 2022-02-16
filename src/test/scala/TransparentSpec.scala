@@ -224,7 +224,7 @@ class TransparentSpec extends AnyFlatSpec with should.Matchers:
       }
     }
 
-    val transparentRogomatic = Rogomatic.makeTransparent(MockRogue, MockUser)
+    val transparentRogomatic = TransparentRogomaticFactory.makeTransparentRogomatic(MockRogue, MockUser)
     transparentRogomatic.performNextCommand()
     MockUser.seenScreen should be (true)
     MockUser.seenInventory should be (true)
