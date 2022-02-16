@@ -8,7 +8,7 @@ import com.pty4j.PtyProcessBuilder
 
 import terminal.Terminal
 
-class Rogue extends IRogue {
+private[rogue] class Rogue extends IRogue {
   private val process = new PtyProcessBuilder()
     .setCommand(Rogue.cmd)
     .setEnvironment(Rogue.env)
