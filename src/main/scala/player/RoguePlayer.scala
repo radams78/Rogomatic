@@ -7,7 +7,7 @@ import rogue.IRogue
 import player.Parser
 
 // TODO Read screen and inventory after performing command
-class RoguePlayer(rogue: IRogue) extends IRoguePlayer {
+private[player] class RoguePlayer(rogue: IRogue) extends IRoguePlayer {
   private val screen = rogue.getScreen()
   private val inventory = readInventoryScreen()
 
