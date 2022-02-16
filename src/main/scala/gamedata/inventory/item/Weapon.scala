@@ -1,6 +1,6 @@
 package gamedata.inventory.item
 
-trait Weapon extends Wieldable
+sealed trait Weapon extends Wieldable
 
 object Weapon {
   case class Melee(meleeType: MeleeType, bonuses: Weapon.Bonuses) extends Weapon {
