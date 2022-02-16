@@ -2,6 +2,4 @@ package gamedata.inventory
 
 import item.Item
 
-case class Inventory(items : Map[Slot, Item]) {
-  
-}
+final case class Inventory(items : Map[Slot, Item])
