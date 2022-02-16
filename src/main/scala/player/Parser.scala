@@ -29,7 +29,7 @@ import gamedata.inventory.item.WeaponType
 import gamedata.inventory.item.Wieldable
 import rogue.IRogue
 
-object Parser extends RegexParsers {
+private[player] object Parser extends RegexParsers {
   def parseInventoryScreen(screen: Seq[String]) = Inventory(
     (for (
       line <- screen.takeWhile(s => !s.contains("--press space to continue--"));
