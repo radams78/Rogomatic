@@ -1,6 +1,5 @@
 package rogue
 
-import gamedata.inventory.item.Item
 import gamedata.inventory.Inventory
 import gamedata.Command
 import rogue.IRoguePlayer
