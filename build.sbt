@@ -13,5 +13,7 @@ lazy val root = project
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test,
     libraryDependencies += "org.jetbrains.pty4j" % "pty4j" % "0.12.7",
-    libraryDependencies += "org.jetbrains.pty4j" % "purejavacomm" % "0.0.11.1"
+    libraryDependencies += "org.jetbrains.pty4j" % "purejavacomm" % "0.0.11.1",
+    libraryDependencies += "org.scala-lang.modules" % "scala-parser-combinators_3" % "2.1.0"
+
   )

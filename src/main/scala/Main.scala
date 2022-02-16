@@ -1,12 +1,4 @@
-import com.pty4j.PtyProcess
-import com.pty4j.PtyProcessBuilder
-import collection.convert.ImplicitConversionsToJava._
-
-import terminal.Terminal
-import scala.concurrent.Future
-import concurrent.ExecutionContext.Implicits.global
-
 @main def rgm : Unit = {
-  val rogue = Rogue()
-  println(rogue.getScreen().mkString("\n"))
+  val player = TransparentRogomaticFactory.makeTransparentRogomatic()
+  player.performNextCommand()
 }
