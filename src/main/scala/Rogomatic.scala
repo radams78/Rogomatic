@@ -1,4 +1,4 @@
-import rogue.IRoguePlayer
+import player.IRoguePlayer
 import expert.IExpert
 
 class Rogomatic(val player : IRoguePlayer, val expert : IExpert) {

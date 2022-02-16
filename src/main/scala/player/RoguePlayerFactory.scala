@@ -1,4 +1,7 @@
-package rogue
+package player
+
+import rogue.IRogue
+import rogue.Rogue
 
 object RoguePlayerFactory {
   def makeRoguePlayer(rogue : IRogue) : IRoguePlayer = new RoguePlayer(rogue)

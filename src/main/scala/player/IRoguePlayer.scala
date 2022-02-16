@@ -1,4 +1,4 @@
-package rogue
+package player
 
 import gamedata.inventory.Inventory
 import gamedata.Command

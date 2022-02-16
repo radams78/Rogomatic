@@ -1,5 +1,5 @@
 import rogue.IRogue
-import rogue.RoguePlayerFactory
+import player.RoguePlayerFactory
 import expert.transparent.IUser
 import expert.transparent.TransparentExpertFactory
 

@@ -1,8 +1,8 @@
-package rogue
+package player
 
 import gamedata.inventory.Inventory
 import gamedata.Command
-import rogue.IRoguePlayer
+import rogue.IRogue
 
 import player.Parser
 
