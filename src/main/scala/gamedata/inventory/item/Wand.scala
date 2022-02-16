@@ -1,5 +1,4 @@
 package gamedata.inventory.item
 
-class Wand(material : Material) extends Item {
-  
-}
+// TODO Identified wands
+final case class Wand(material : Material) extends Item
