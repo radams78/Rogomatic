@@ -19,6 +19,7 @@ private[player] class RoguePlayer(rogue: IRogue) extends IRoguePlayer {
     for (k <- command.keypresses)
       rogue.sendKeypress(k)
 
+  // @throws UnparsableInventoryLineException if inventory screen cannot be read
   private def readInventoryScreen(): Inventory = {
     summonInventoryScreen()
     val inventory = Parser.parseInventoryScreen(rogue.getScreen())

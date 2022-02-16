@@ -30,19 +30,21 @@ import gamedata.inventory.item.Wieldable
 import rogue.IRogue
 
 private[player] object Parser extends RegexParsers {
+  // Precondition: screen is a valid inventory screen from Rogue
+  // @throws UnparsableInventoryLineException
   def parseInventoryScreen(screen: Seq[String]) = Inventory(
     (for (
       line <- screen.takeWhile(s => !s.contains("--press space to continue--"));
-      inventoryLine = parseInventoryLine(line)
+      inventoryLine = parseInventoryLine(line, screen)
     ) yield {
       inventoryLine.slot -> inventoryLine.item
     }).toMap
   )
 
-  private def parseInventoryLine(line: String): InventoryScreenLine =
+  private def parseInventoryLine(line: String, screen : Seq[String]): InventoryScreenLine =
     parseAll(inventoryLine, line) match {
       case Success(result, _) => result
-      case failure: NoSuccess => throw new java.lang.Error(failure.msg)
+      case failure: NoSuccess => throw new UnparsableInventoryLineException(failure.msg, line, screen)
     }
 
   private val slot: Parser[Slot] = """[a-v]""".r ^^ { (slot: String) =>
@@ -405,3 +407,10 @@ enum InventoryScreenLine(val slot: Slot, val item: Item) {
   case InventoryItem(override val slot: Slot, override val item: Item)
       extends InventoryScreenLine(slot, item)
 }
+
+private[player] class UnparsableInventoryLineException(msg : String, line : String, screen : Seq[String]) 
+  extends java.lang.IllegalArgumentException(
+  s"""Parse error: $msg\n
+  while parsing line: $line\n
+  in inventory screen:\n${screen.mkString("\n")}
+  """)
