@@ -60,5 +60,10 @@ object Weapon {
   enum Bonuses {
     case Unidentified
     case Identified(plusToHit: Bonus, plusDamage: Bonus)
+
+    override def toString : String = this match {
+      case Unidentified => "unidentified"
+      case Identified(plusToHit, plusDamage) => s"$plusToHit,$plusDamage"
+    }
   }
 }
