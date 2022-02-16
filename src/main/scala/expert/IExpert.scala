@@ -1,0 +1,5 @@
+package expert
+
+trait IExpert {
+  
+}
