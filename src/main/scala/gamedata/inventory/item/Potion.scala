@@ -1,3 +1,3 @@
 package gamedata.inventory.item
 
-class Potion(quantity : Int, colour : Colour) extends Item
+final case class Potion(quantity : Int, colour : Colour) extends Item
