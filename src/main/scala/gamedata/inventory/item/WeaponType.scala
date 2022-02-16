@@ -1,6 +1,6 @@
 package gamedata.inventory.item
 
-trait WeaponType
+sealed trait WeaponType
 
 enum MeleeType extends WeaponType {
   case MACE
